@@ -14,18 +14,31 @@ The members of this team are below.
 ## Yixiao Sun
 https://github.com/elliotsy
 
+I'm Yixiao Sun and I'm majoring in Psychology and minor in Mathematics.
 
 ## Yimin Wu
+
 https://github.com/yiminwu-00
 
+I'm Yimin Wu. I am a senior double majoring in Economics and Mathematics.
 
 ## Lixiang Zheng
+
 https://github.com/LixiangZheng-Lisa
+
+I'm Lixiang Zheng and I'm majoring in Econ & Math.
 
 ## Xinnuo Li
 
+https://github.com/Xinnuoli
+
+Hi, I am Xinnuo Li, and I am a junior majoring in Math and Econ.
 
 ## Qiannan Wang
+
+https://github.com/wqnsbl   
+
+My name is Wang Qiannan. I am a senior student majoring in mathematics and statistics. I like cats, especially Ragdoll.
 
 <!-- Please leave in the information below -->
 
