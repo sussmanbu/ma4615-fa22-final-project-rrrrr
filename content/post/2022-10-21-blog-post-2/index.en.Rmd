@@ -1,0 +1,21 @@
+---
+title: Blog Post 2
+author: RRRRR
+date: '2022-10-21'
+slug: []
+categories: []
+tags: []
+description: ~
+toc: yes
+authors: []
+series: []
+lastmod: '2022-10-21T16:28:15-04:00'
+featuredVideo: ~
+featuredImage: ~
+---
+
+```{r}
+library(tidyverse)
+ABC<-read_csv("/Users/elliot-sun/Desktop/MA 415/ma4615-fa22-final-project-rrrrr/dataset/data-ignore/Highway-Rail_Grade_Crossing_Accident_Data.csv", show_col_types = FALSE )
+```
+
