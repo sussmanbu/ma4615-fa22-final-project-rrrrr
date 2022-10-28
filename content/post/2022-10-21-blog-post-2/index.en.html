@@ -26,7 +26,7 @@ featuredImage: ~
 <pre class="r"><code>suppressPackageStartupMessages(library(tidyverse)) 
 
 #load data
-HighwayRail&lt;-read_csv(&quot;/Users/elliot-sun/Desktop/MA 415/ma4615-fa22-final-project-rrrrr/dataset/data-ignore/Highway-Rail_Grade_Crossing_Accident_Data.csv&quot;, show_col_types = FALSE )</code></pre>
+HighwayRail&lt;-read_csv(here::here(&quot;dataset-ignore&quot;, &quot;Highway-Rail_Grade_Crossing_Accident_Data.csv&quot;), show_col_types = FALSE)</code></pre>
 <pre><code>## Warning: One or more parsing issues, see `problems()` for details</code></pre>
 <pre class="r"><code>#only keep data in MA
 HighwayRail_MA &lt;- HighwayRail %&gt;% 
