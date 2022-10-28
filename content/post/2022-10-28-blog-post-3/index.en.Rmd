@@ -1,0 +1,48 @@
+---
+title: Blog Post 3
+author: RRRRR
+date: '2022-10-28'
+slug: []
+categories: []
+tags: []
+description: ~
+toc: yes
+authors: []
+series: []
+lastmod: '2022-10-28T13:53:06-04:00'
+featuredVideo: ~
+featuredImage: ~
+---
+
+## Exploratory Data Analysis
+When we select the state name Massachusetts as the main subject that we are researching on, the output returns 1017 rows of results, years ranging from 1986 to 2021. And most of the columns aren’t statistical, since many of them are explanations of how the accidents happened. The first thing we want to do with this subset is research the statistical data and see if these are the reasons causing the incidents, for example, temperature, vehicle speed, visibility… We first filtered any “NA” in the `Weather Condition` and Temperature columns. Also, we first plotted the weather condition by temperature and fill it with the count of accidents, and we found an outlier for the temperature that is over 400 F. To clean the data, we filtered the data that are less or equal to the historic highest temperature in MA, which is 104 F. 
+
+## How We Clean the Data
+```{r}
+# load tidyverse
+suppressPackageStartupMessages(library(tidyverse)) 
+
+# summary data
+summary(MA_select2$Temperature)
+
+# filter out missing values, Temperature higher than 104 
+MA_select2 <- MA_select %>% filter(!is.na(`Weather Condition`) & !is.na(Temperature) & !is.na(Visibility), Temperature <= 104)
+
+# boxplot for weather conditions, Temperature and accident number 
+MA_select2 %>% group_by(`Weather Condition`) %>% mutate(Accident_Count = n()) %>% 
+  ggplot(aes(x = reorder(`Weather Condition`, Temperature, decreasing=FALSE), y = Temperature, fill = Accident_Count)) + geom_boxplot() + labs(x = "Weather Condition")
+
+# plot to show the percentage of car accidents for different visibility in different weather conditions
+MA_select2 %>% group_by(`Weather Condition`) %>% mutate(Accident_Count = n()) %>% 
+  ggplot(aes(x = `Weather Condition`, fill = Visibility)) + geom_bar() + labs(y = "Accident_Count")
+
+# plot to show the number of car accidents for different visibility in different weather conditions
+MA_select2 %>% group_by(`Weather Condition`) %>% mutate(Accident_Count = n()) %>% 
+  ggplot(aes(x = `Weather Condition`, fill = Visibility)) + geom_bar(position = "fill") + labs(y = "Accident_Count")
+
+```
+## Patterns in the Data
+From the first graph, we found it surprising that snowy days had the lowest count of accidents instead of clear days. The clear days not only have the second highest count of accidents but also have the largest temperature range. We find this result goes against common sense. To solve this problem, we will further investigate the traffic volumes datasets to replace the count of accidents with the rate of accidents in different weather conditions.
+
+For the second and third graphs, we found there is no NA value from the visibility column. Both graphs show that in foggy weather, the probability of accidents is significantly large at dark, and in all weather conditions, the proportions of accidents that happened at dusk and dawn are the lowest.
+
