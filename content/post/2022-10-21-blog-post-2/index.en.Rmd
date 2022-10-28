@@ -1,0 +1,25 @@
+---
+title: Blog Post 2
+author: RRRRR
+date: '2022-10-21'
+slug: []
+categories: []
+tags: []
+description: ~
+toc: yes
+authors: []
+series: []
+lastmod: '2022-10-21T14:56:33-04:00'
+featuredVideo: ~
+featuredImage: ~
+---
+## Data Loading and Cleaning 
+
+Since our original data was in CSV format, we loaded it directly. Our group aims to find one specific continent and its accident numbers and factors that influence the accident rate. We consider all counties in Massachusetts as our main subjects to research, so as the original dataset is too big and contains all states and a lot of useless information, we try to clean and get the subset that focuses on the data from MA.
+
+The original dataset we are working on has a lot of columns with unnecessary data, which results from missing information when collecting information from the report. We only want to work on the columns with valid info and important factors that might have related to the causes of the accident. So we first find how many missing rows and data are in our cleaned, mainly focused MA subsets; then we evaluate each column to decide which columns we want to keep for our research.
+
+```{r cleaning data}
+
+```
+
