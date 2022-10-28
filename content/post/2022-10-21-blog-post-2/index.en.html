@@ -1,0 +1,59 @@
+---
+title: Blog Post 2
+author: RRRRR
+date: '2022-10-21'
+slug: []
+categories: []
+tags: []
+description: ~
+toc: yes
+authors: []
+series: []
+lastmod: '2022-10-21T16:28:15-04:00'
+featuredVideo: ~
+featuredImage: ~
+---
+
+
+<div id="TOC">
+
+</div>
+
+<div id="data-loading-and-cleaning" class="section level2">
+<h2>Data Loading and Cleaning</h2>
+<p>Since our original data was in CSV format, we loaded it directly. Our group aims to find one specific continent and its accident numbers and factors that influence the accident rate. We consider all counties in Massachusetts as our main subjects to research, so as the original dataset is too big and contains all states and a lot of useless information, we try to clean and get the subset that focuses on the data from MA.</p>
+<p>The original dataset we are working on has a lot of columns with unnecessary data, which results from missing information when collecting information from the report. We only want to work on the columns with valid info and important factors that might have related to the causes of the accident. So we first find how many missing rows and data are in our cleaned, mainly focused MA subsets; then we evaluate each column to decide which columns we want to keep for our research.</p>
+<pre class="r"><code>suppressPackageStartupMessages(library(tidyverse)) 
+
+#load data
+HighwayRail&lt;-read_csv(&quot;/Users/elliot-sun/Desktop/MA 415/ma4615-fa22-final-project-rrrrr/dataset/data-ignore/Highway-Rail_Grade_Crossing_Accident_Data.csv&quot;, show_col_types = FALSE )</code></pre>
+<pre><code>## Warning: One or more parsing issues, see `problems()` for details</code></pre>
+<pre class="r"><code>#only keep data in MA
+HighwayRail_MA &lt;- HighwayRail %&gt;% 
+  filter(`State Name` == &quot;MASSACHUSETTS&quot;) 
+
+#select necessary column names for MA in original dataset
+MA_select &lt;- HighwayRail_MA %&gt;%
+  select(`Report Year`, Date,   Month, Day, Hour, Minute, `AM/PM`, Time, `Nearest Station`,     Subdivision,    `County Name`, `State Name`,`Highway Name`,`Public/Private Code`, `Public/Private`, `Highway User`, `Estimated Vehicle Speed`,`Vehicle Direction`,  `Highway User Position`,`Equipment Involved`, `Equipment Struck`, Temperature, Visibility, `Weather Condition`, `Number of Locomotive Units`, `Number of Cars`, `Train Speed`, `Estimated/Recorded Speed`,   `Train Direction`, `Crossing Warning Expanded 1`,`Crossing Warning Expanded 2`,`Crossing Warning Expanded 3`,`Crossing Warning Expanded 4`,`Crossing Warning Expanded 5`,`Crossing Warning Expanded 6`,`Crossing Warning Expanded 7`,`Crossing Warning Expanded 8`,`Crossing Warning Expanded 9`, `Crossing Warning Expanded 10`, `Crossing Warning Expanded 11`,  `Crossing Warning Expanded 12`, `Signaled Crossing Warning Code`, `Signaled Crossing Warning`, `Roadway Condition`, `Crossing Warning Location`,    `Warning Connected To Signal`, `Crossing Illuminated`,`User Age`,`User Gender`,`User Struck By Second Train`, `Highway User Action`, `View Obstruction`, `Driver Condition`, `Driver In Vehicle`, `Crossing Users Killed For Reporting Railroad`, `Crossing Users Injured For Reporting Railroad`, `Vehicle Damage Cost`,   `Employees Killed For Reporting Railroad`, `Employees Injured For Reporting Railroad`, `Passengers Killed For Reporting Railroad`, `Passengers Injured For Reporting Railroad`, Narrative)
+head(MA_select, n=10)</code></pre>
+<pre><code>## # A tibble: 10 × 62
+##    Report…¹ Date  Month Day   Hour  Minute `AM/PM` Time  Neare…² Subdi…³ Count…⁴
+##       &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;   &lt;tim&gt; &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;  
+##  1     1986 06/3… 06    30    10    28     AM      10:28 WARREN  &lt;NA&gt;    WORCES…
+##  2     1986 11/2… 11    25    05    30     PM      17:30 NORWOOD &lt;NA&gt;    NORFOLK
+##  3     1986 11/2… 11    21    05    15     AM      05:15 READVI… &lt;NA&gt;    NORFOLK
+##  4     1986 11/2… 11    21    02    26     AM      02:26 PALMER  &lt;NA&gt;    HAMPDEN
+##  5     1986 11/1… 11    11    05    15     PM      17:15 WILLIA… &lt;NA&gt;    HAMPDEN
+##  6     1986 12/1… 12    18    11    45     PM      23:45 LAWREN… &lt;NA&gt;    ESSEX  
+##  7     1986 12/0… 12    04    11    08     AM      11:08 BEVERLY &lt;NA&gt;    ESSEX  
+##  8     1986 03/0… 03    04    09    11     AM      09:11 CHESTER &lt;NA&gt;    HAMPDEN
+##  9     1986 11/2… 11    20    01    58     PM      13:58 REVERE  &lt;NA&gt;    SUFFOLK
+## 10     1986 09/2… 09    29    06    33     AM      06:33 FRAMIN… &lt;NA&gt;    MIDDLE…
+## # … with 51 more variables: `State Name` &lt;chr&gt;, `Highway Name` &lt;chr&gt;,
+## #   `Public/Private Code` &lt;chr&gt;, `Public/Private` &lt;chr&gt;, `Highway User` &lt;chr&gt;,
+## #   `Estimated Vehicle Speed` &lt;dbl&gt;, `Vehicle Direction` &lt;chr&gt;,
+## #   `Highway User Position` &lt;chr&gt;, `Equipment Involved` &lt;chr&gt;,
+## #   `Equipment Struck` &lt;chr&gt;, Temperature &lt;dbl&gt;, Visibility &lt;chr&gt;,
+## #   `Weather Condition` &lt;chr&gt;, `Number of Locomotive Units` &lt;dbl&gt;,
+## #   `Number of Cars` &lt;dbl&gt;, `Train Speed` &lt;dbl&gt;, …</code></pre>
+</div>
