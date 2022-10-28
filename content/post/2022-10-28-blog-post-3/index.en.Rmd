@@ -38,8 +38,6 @@ When we select the state name Massachusetts as the main subject that we are rese
 
 ## How We Clean the Data
 ```{r}
-# summary data
-summary(MA_select2$Temperature)
 
 # filter out missing values, Temperature higher than 104 
 MA_select2 <- MA_select %>% filter(!is.na(`Weather Condition`) & !is.na(Temperature) & !is.na(Visibility), Temperature <= 104)
