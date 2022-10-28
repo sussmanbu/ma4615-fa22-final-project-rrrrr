@@ -22,7 +22,7 @@ The original dataset we are working on has a lot of columns with unnecessary dat
 suppressPackageStartupMessages(library(tidyverse)) 
 
 #load data
-HighwayRail<-read_csv("/Users/elliot-sun/Desktop/MA 415/ma4615-fa22-final-project-rrrrr/dataset/data-ignore/Highway-Rail_Grade_Crossing_Accident_Data.csv", show_col_types = FALSE )
+HighwayRail<-read_csv(here::here("dataset-ignore", "Highway-Rail_Grade_Crossing_Accident_Data.csv"), show_col_types = FALSE )
 
 #only keep data in MA
 HighwayRail_MA <- HighwayRail %>% 
