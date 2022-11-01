@@ -1,0 +1,121 @@
+---
+title: Blog Post 4
+author: RRRRR
+date: '2022-11-01'
+slug: []
+categories: []
+tags: []
+description: ~
+toc: yes
+authors: []
+series: []
+lastmod: '2022-11-01T17:51:35-04:00'
+featuredVideo: ~
+featuredImage: ~
+---
+
+
+<div id="TOC">
+
+</div>
+
+<div id="deeper-and-broader-into-eda" class="section level2">
+<h2>Deeper and Broader Into EDA</h2>
+<p>Last week, we hypothesized that the worse the weather conditions were, the more accidents it would have. However, by exploring temperature and visibility data, we found that it is actually the clear days have the highest count of accidents. We further related this results to additional factors such as traffice volumn or roadway conditions that led to this surprising result. For further exploration, we choose traffic volume to be our confounded variable to figure out the major trend.</p>
+<pre class="r"><code># load tidyverse
+suppressPackageStartupMessages(library(tidyverse)) 
+
+#load data
+HighwayRail&lt;-read_csv(here::here(&quot;dataset-ignore&quot;, &quot;Highway-Rail_Grade_Crossing_Accident_Data.csv&quot;), show_col_types = FALSE)</code></pre>
+<pre><code>## Warning: One or more parsing issues, see `problems()` for details</code></pre>
+<pre class="r"><code>#only keep data in MA
+HighwayRail_MA &lt;- HighwayRail %&gt;% 
+  filter(`State Name` == &quot;MASSACHUSETTS&quot;) 
+
+#select necessary column names for MA in original dataset
+MA_select &lt;- HighwayRail_MA %&gt;%
+  select(`Report Year`, Date,   Month, Day, Hour, Minute, `AM/PM`, Time, `Nearest Station`,     Subdivision,    `County Name`, `State Name`,`Highway Name`,`Public/Private Code`, `Public/Private`, `Highway User`, `Estimated Vehicle Speed`,`Vehicle Direction`,  `Highway User Position`,`Equipment Involved`, `Equipment Struck`, Temperature, Visibility, `Weather Condition`, `Number of Locomotive Units`, `Number of Cars`, `Train Speed`, `Estimated/Recorded Speed`,   `Train Direction`, `Crossing Warning Expanded 1`,`Crossing Warning Expanded 2`,`Crossing Warning Expanded 3`,`Crossing Warning Expanded 4`,`Crossing Warning Expanded 5`,`Crossing Warning Expanded 6`,`Crossing Warning Expanded 7`,`Crossing Warning Expanded 8`,`Crossing Warning Expanded 9`, `Crossing Warning Expanded 10`, `Crossing Warning Expanded 11`,  `Crossing Warning Expanded 12`, `Signaled Crossing Warning Code`, `Signaled Crossing Warning`, `Roadway Condition`, `Crossing Warning Location`,    `Warning Connected To Signal`, `Crossing Illuminated`,`User Age`,`User Gender`,`User Struck By Second Train`, `Highway User Action`, `View Obstruction`, `Driver Condition`, `Driver In Vehicle`, `Crossing Users Killed For Reporting Railroad`, `Crossing Users Injured For Reporting Railroad`, `Vehicle Damage Cost`,   `Employees Killed For Reporting Railroad`, `Employees Injured For Reporting Railroad`, `Passengers Killed For Reporting Railroad`, `Passengers Injured For Reporting Railroad`, Narrative)
+head(MA_select, n=10)</code></pre>
+<pre><code>## # A tibble: 10 × 62
+##    Report…¹ Date  Month Day   Hour  Minute `AM/PM` Time  Neare…² Subdi…³ Count…⁴
+##       &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;   &lt;tim&gt; &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;  
+##  1     1986 06/3… 06    30    10    28     AM      10:28 WARREN  &lt;NA&gt;    WORCES…
+##  2     1986 11/2… 11    25    05    30     PM      17:30 NORWOOD &lt;NA&gt;    NORFOLK
+##  3     1986 11/2… 11    21    05    15     AM      05:15 READVI… &lt;NA&gt;    NORFOLK
+##  4     1986 11/2… 11    21    02    26     AM      02:26 PALMER  &lt;NA&gt;    HAMPDEN
+##  5     1986 11/1… 11    11    05    15     PM      17:15 WILLIA… &lt;NA&gt;    HAMPDEN
+##  6     1986 12/1… 12    18    11    45     PM      23:45 LAWREN… &lt;NA&gt;    ESSEX  
+##  7     1986 12/0… 12    04    11    08     AM      11:08 BEVERLY &lt;NA&gt;    ESSEX  
+##  8     1986 03/0… 03    04    09    11     AM      09:11 CHESTER &lt;NA&gt;    HAMPDEN
+##  9     1986 11/2… 11    20    01    58     PM      13:58 REVERE  &lt;NA&gt;    SUFFOLK
+## 10     1986 09/2… 09    29    06    33     AM      06:33 FRAMIN… &lt;NA&gt;    MIDDLE…
+## # … with 51 more variables: `State Name` &lt;chr&gt;, `Highway Name` &lt;chr&gt;,
+## #   `Public/Private Code` &lt;chr&gt;, `Public/Private` &lt;chr&gt;, `Highway User` &lt;chr&gt;,
+## #   `Estimated Vehicle Speed` &lt;dbl&gt;, `Vehicle Direction` &lt;chr&gt;,
+## #   `Highway User Position` &lt;chr&gt;, `Equipment Involved` &lt;chr&gt;,
+## #   `Equipment Struck` &lt;chr&gt;, Temperature &lt;dbl&gt;, Visibility &lt;chr&gt;,
+## #   `Weather Condition` &lt;chr&gt;, `Number of Locomotive Units` &lt;dbl&gt;,
+## #   `Number of Cars` &lt;dbl&gt;, `Train Speed` &lt;dbl&gt;, …</code></pre>
+<pre class="r"><code># bar plots for each county
+MA_select %&gt;% group_by(`County Name`) %&gt;% mutate(Accident_Count = n()) %&gt;% 
+  ggplot(aes(x = `County Name`)) + geom_bar() + coord_flip()</code></pre>
+<p><img src="{{< blogdown/postref >}}index.en_files/figure-html/1-1.png" width="672" /></p>
+<p>When going over the dataset and looking for the data we need, we found a typo in county name column, which is county “Worcester” was mistakenly recorded as “Worchester”. To clean the data, we used “replace” funtion to modify this. After cleaning the data, we group by each county name and count the number of accidents happened in each county. The result shows that Middlesex has the largest number of accidents while Berkshire has the lowest count. We expect this result related to other variables such as the traffic volume in each county.</p>
+<pre class="r"><code># bar plots for accident_count based on Weather Condition and Raodwar Condition
+MA_select %&gt;% filter(!is.na(`Roadway Condition`)) %&gt;% group_by(`Roadway Condition`) %&gt;% mutate(Accident_Count = n()) %&gt;% 
+  ggplot(aes(x = `Roadway Condition`)) + geom_bar() +
+  facet_grid(~as.factor(`Weather Condition`)) </code></pre>
+<p><img src="{{< blogdown/postref >}}index.en_files/figure-html/2-1.png" width="672" /></p>
+<p>We then explore the relationship between weather conditions, which we studied last week, and roadway conditions. We used facet_wrap to divide the data by weather conditions. From the results, we observed that over all weather and roadway conditions, dry roadways with clear days have the highest count of accidents. This result is quite surprising since the best conditions for driving(clear days and dry roadways) still have the highest count, and this also contradicts our conjecture from last week. We suspected that the reasons why clear days have the highest count may be due to some omitted reasons from roadway conditions.</p>
+</div>
+<div id="statistical-modeling" class="section level2">
+<h2>Statistical Modeling</h2>
+<pre class="r"><code># regression modeling: y = accident_count x1 = train_speed x2=vehicle_speed
+MA_regression &lt;- MA_select %&gt;% group_by(`County Name`) %&gt;% mutate(Accident_Count = n()) %&gt;% select(`County Name`, Accident_Count, `Train Speed`, `Estimated Vehicle Speed`)
+
+(
+  MA_reg &lt;- lm(Accident_Count ~ `Train Speed` + `Estimated Vehicle Speed`, data = MA_regression) %&gt;% broom:: tidy() %&gt;% knitr::kable(format = &quot;markdown&quot;)
+)</code></pre>
+<table>
+<colgroup>
+<col width="38%" />
+<col width="17%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">term</th>
+<th align="right">estimate</th>
+<th align="right">std.error</th>
+<th align="right">statistic</th>
+<th align="right">p.value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">(Intercept)</td>
+<td align="right">200.1044094</td>
+<td align="right">9.247305</td>
+<td align="right">21.639214</td>
+<td align="right">0.0000000</td>
+</tr>
+<tr class="even">
+<td align="left"><code>Train Speed</code></td>
+<td align="right">-0.4911663</td>
+<td align="right">0.278048</td>
+<td align="right">-1.766480</td>
+<td align="right">0.0777079</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>Estimated Vehicle Speed</code></td>
+<td align="right">-1.1195376</td>
+<td align="right">0.390869</td>
+<td align="right">-2.864227</td>
+<td align="right">0.0042930</td>
+</tr>
+</tbody>
+</table>
+<p>We want to explore the relationship between accident number and the speed of crushed cars and trains. So, the response variable we chose is the accident number of each county, and the predictor variables are train speed and vehicle speed. We fit the data by multiple linear regression model and we don’t need to make any transformations of the predictors. Noticeably, at the 90% confidence level we chose, p-values are less than 0.1, thus, the estimates are statistically significant.</p>
+</div>

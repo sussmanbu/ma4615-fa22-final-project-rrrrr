@@ -1,0 +1,69 @@
+---
+title: Blog Post 4
+author: RRRRR
+date: '2022-11-01'
+slug: []
+categories: []
+tags: []
+description: ~
+toc: yes
+authors: []
+series: []
+lastmod: '2022-11-01T17:51:35-04:00'
+featuredVideo: ~
+featuredImage: ~
+---
+## Deeper and Broader Into EDA
+Last week, we hypothesized that the worse the weather conditions were, the more accidents it would have. However, by exploring temperature and visibility data, we found that it is actually the clear days have the highest count of accidents. We further related this results to additional factors such as traffice volumn or roadway conditions that led to this surprising result. For further exploration, we choose traffic volume to be our confounded variable to figure out the major trend.
+
+```{r from post2}
+# load tidyverse
+suppressPackageStartupMessages(library(tidyverse)) 
+
+#load data
+HighwayRail<-read_csv(here::here("dataset-ignore", "Highway-Rail_Grade_Crossing_Accident_Data.csv"), show_col_types = FALSE)
+
+#only keep data in MA
+HighwayRail_MA <- HighwayRail %>% 
+  filter(`State Name` == "MASSACHUSETTS") 
+
+#select necessary column names for MA in original dataset
+MA_select <- HighwayRail_MA %>%
+  select(`Report Year`, Date,	Month, Day, Hour, Minute, `AM/PM`, Time, `Nearest Station`, 	Subdivision,	`County Name`, `State Name`,`Highway Name`,`Public/Private Code`, `Public/Private`, `Highway User`, `Estimated Vehicle Speed`,`Vehicle Direction`,	`Highway User Position`,`Equipment Involved`, `Equipment Struck`, Temperature, Visibility, `Weather Condition`, `Number of Locomotive Units`, `Number of Cars`, `Train Speed`, `Estimated/Recorded Speed`,	 `Train Direction`, `Crossing Warning Expanded 1`,`Crossing Warning Expanded 2`,`Crossing Warning Expanded 3`,`Crossing Warning Expanded 4`,`Crossing Warning Expanded 5`,`Crossing Warning Expanded 6`,`Crossing Warning Expanded 7`,`Crossing Warning Expanded 8`,`Crossing Warning Expanded 9`, `Crossing Warning Expanded 10`, `Crossing Warning Expanded 11`,	`Crossing Warning Expanded 12`,	`Signaled Crossing Warning Code`, `Signaled Crossing Warning`, `Roadway Condition`,	`Crossing Warning Location`,	`Warning Connected To Signal`, `Crossing Illuminated`,`User Age`,`User Gender`,`User Struck By Second Train`, `Highway User Action`, `View Obstruction`, `Driver Condition`, `Driver In Vehicle`, `Crossing Users Killed For Reporting Railroad`, `Crossing Users Injured For Reporting Railroad`, `Vehicle Damage Cost`,	`Employees Killed For Reporting Railroad`, `Employees Injured For Reporting Railroad`, `Passengers Killed For Reporting Railroad`, `Passengers Injured For Reporting Railroad`, Narrative)
+head(MA_select, n=10)
+```
+
+
+```{r 1}
+# bar plots for each county
+MA_select %>% group_by(`County Name`) %>% mutate(Accident_Count = n()) %>% 
+  ggplot(aes(x = `County Name`)) + geom_bar() + coord_flip()
+```
+
+When going over the dataset and looking for the data we need, we found a typo in county name column, which is county “Worcester” was mistakenly recorded as “Worchester”. To clean the data, we used “replace” funtion to modify this. After cleaning the data, we group by each county name and count the number of accidents happened in each county. The result shows that Middlesex has the largest number of accidents while Berkshire has the lowest count. We expect this result related to other variables such as the traffic volume in each county.
+
+
+```{r 2}
+# bar plots for accident_count based on Weather Condition and Raodwar Condition
+MA_select %>% filter(!is.na(`Roadway Condition`)) %>% group_by(`Roadway Condition`) %>% mutate(Accident_Count = n()) %>% 
+  ggplot(aes(x = `Roadway Condition`)) + geom_bar() +
+  facet_grid(~as.factor(`Weather Condition`)) 
+```
+
+We then explore the relationship between weather conditions, which we studied last week, and roadway conditions. We used facet_wrap to divide the data by weather conditions. From the results, we observed that over all weather and roadway conditions, dry roadways with clear days have the highest count of accidents. This result is quite surprising since the best conditions for driving(clear days and dry roadways) still have the highest count, and this also contradicts our conjecture from last week. We suspected that the reasons why clear days have the highest count may be due to some omitted reasons from roadway conditions.
+
+## Statistical Modeling
+```{r 3}
+# regression modeling: y = accident_count x1 = train_speed x2=vehicle_speed
+MA_regression <- MA_select %>% group_by(`County Name`) %>% mutate(Accident_Count = n()) %>% select(`County Name`, Accident_Count, `Train Speed`, `Estimated Vehicle Speed`)
+
+(
+  MA_reg <- lm(Accident_Count ~ `Train Speed` + `Estimated Vehicle Speed`, data = MA_regression) %>% broom:: tidy() %>% knitr::kable(format = "markdown")
+)
+```
+
+We want to explore the relationship between accident number and the speed of crushed cars and trains. So, the response variable we chose is the accident number of each county, and the predictor variables are train speed and vehicle speed. We fit the data by multiple linear regression model and we don’t need to make any transformations of the predictors. Noticeably, at the 90% confidence level we chose, p-values are less than 0.1, thus, the estimates are statistically significant. 
+
+
+
+
