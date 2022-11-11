@@ -1,0 +1,46 @@
+---
+title: Blog Post 5
+author: RRRRR
+date: '2022-11-11'
+slug: []
+categories: []
+tags: []
+description: ~
+toc: yes
+authors: []
+series: []
+lastmod: '2022-11-11T17:01:34-05:00'
+featuredVideo: ~
+featuredImage: ~
+---
+
+
+<div id="TOC">
+
+</div>
+
+<div id="save-our-cleaned-data" class="section level2">
+<h2>Save our cleaned data</h2>
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ──
+## ✔ ggplot2 3.3.6      ✔ purrr   0.3.4 
+## ✔ tibble  3.1.8      ✔ dplyr   1.0.10
+## ✔ tidyr   1.2.0      ✔ stringr 1.4.1 
+## ✔ readr   2.1.2      ✔ forcats 0.5.2 
+## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+## ✖ dplyr::filter() masks stats::filter()
+## ✖ dplyr::lag()    masks stats::lag()</code></pre>
+<pre class="r"><code>load(here::here(&quot;dataset-ignore&quot;, &quot;MA_select.RData&quot;))
+problems()</code></pre>
+<p>The original dataset have parsing issues, but for our new cleaned data, there is no parsing issues any more. We have save the cleaned data in the dataset-ignore folder. In our original dataset, we found a typo of mistakenly recording “WORCESTER” as “WORCHESTER”. To solve this problem, we used str_replace_all funtion and saved in our new cleaned data.</p>
+</div>
+<div id="data-equity" class="section level2">
+<h2>Data Equity</h2>
+<p>The original large Data set is collected from objective accident reports. The information gathered from the reports are fact-based from the exact scenario, including both descriptive and numerical data. Information such as accident reasons or driver’s conditions are also included in the report for further potential clarification of the causes of accidents. All the information that are undecided or blurry are considered none or empty. The purpose of this dataset is to show all the general information of recorded accidents involving trains and cars in the highway crossing. The viewer can easily get access to this dataset to get information. Since this is a public dataset, everyone can be considered as a potential reader, and it can provide useful information in different areas.</p>
+</div>
+<div id="combining-the-datasets" class="section level2">
+<h2>Combining the datasets</h2>
+<p>In the previous blog post, we’ve found a surprising conclusion that compared to extreme weather conditions, the clear days have the highest count of accidents. Therefore, we would like to found another dataset to see if there are other factors lead to this result, i.e, traffic volume as the confounding variable.
+So, the datasets we’re combining is the traffic count dataset from Massachusetts Department of Transportation Highway Division. As the data points are separately collected on the website, we decided to manually filter the average monthly traffic count by each county in our original dataset at Massachusetts, from 2017.01 to 2022.06. We summarized each data point in csv file and make another dataset about MA traffic volume for us to finish in-depth analysis. By looking at the correlation between number of incidents, clear days, and traffic volume, we might able to assess our initial counter-intuitive findings on relationship between weather conditions and incident number.
+No major difficulties are encountered in combining the data, but it takes significant amount of time for us to manually combine them in a dataset for further usage. So, we are still in the process of combining it, and plan to finish it and test our hypothesis on the confounding variable in our next blog post.</p>
+</div>
