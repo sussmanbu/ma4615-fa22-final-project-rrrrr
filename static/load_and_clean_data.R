@@ -14,7 +14,7 @@ library('stringr')
 MA_select$`County Name` <- str_replace_all(MA_select$`County Name`, "WORCHESTER", "WORCESTER")
 View(MA_select)
 
-write_csv(MA_select, file = here::here("dataset-ignore", "MA_select.csv"))
+write_csv(MA_select, file = here::here("dataset", "MA_select.csv"))
 
-save(MA_select, file = here::here("dataset-ignore/MA_select.RData"))
+save(MA_select, file = here::here("dataset/MA_select.RData"))
 
