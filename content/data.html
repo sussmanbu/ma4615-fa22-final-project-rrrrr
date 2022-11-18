@@ -29,7 +29,7 @@ Since this is an extremely big database (241519 rows and 159 columns), we only f
 <div id="section-1.1-cleaning-and-loading-the-original-dataset" class="section level2">
 <h2>Section 1.1: Cleaning and Loading the Original Dataset</h2>
 <p>As mentioned, the original dataset has a lot of columns with unnecessary columns, which results in missing information that we wanted to omit. Also, as we were only considering one specific state to study its accident numbers and factors that influence the accident rate, we cleaned the data in our next step.</p>
-<p>So, for our EDA, we began by filtering out the data from Massachusetts, and removed variables we viewed as irrelevant to the possible causes of an accident or the coded columns that are repeated, such as types of crossing warning, number of vehicle occupants, reporting parties, etc. Next, since we found a typo of mistakenly recording “WORCESTER” as “WORCHESTER” during our initial data exploration, we used <code>str_replace_all</code> function to solve this problem. Finally, we checked that there were no parsing issues in our original cleaned dataset MA_select, which can be found <a href="https://drive.google.com/drive/folders/11KkjZDgEj-kxNw3r9OaeNAkWHwmMqPma">here</a>.</p>
+<p>So, for our EDA, we began by filtering out the data from Massachusetts, and removed variables we viewed as irrelevant to the possible causes of an accident or the coded columns that are repeated, such as types of crossing warning, number of vehicle occupants, reporting parties, etc. Next, since we found a typo of mistakenly recording “WORCESTER” as “WORCHESTER” during our initial data exploration, we used <code>str_replace_all</code> function to solve this problem. Finally, we checked that there were no parsing issues in our original cleaned dataset MA_select, which can be found <a href="https://drive.google.com/file/d/1OdrOlaBwO8MlDSL78BxI74YHk4wpAQhN/view">here</a>.</p>
 </div>
 <div id="section-1.2-potential-limitations-of-our-dataset" class="section level2">
 <h2>Section 1.2: Potential Limitations of our Dataset</h2>
@@ -56,6 +56,34 @@ Since this is an extremely big database (241519 rows and 159 columns), we only f
 <div id="section-4-code-for-cleaning-the-datasets" class="section level2">
 <h2>Section 4: Code for Cleaning the Datasets</h2>
 <p>Our load_and_clean_data.R details of the original data MA_select can be found in detail below. We used Excel to manually combine the data points from the website for the MA traffic volume dataset, so no R code is provided here.</p>
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ──
+## ✔ ggplot2 3.3.6      ✔ purrr   0.3.4 
+## ✔ tibble  3.1.8      ✔ dplyr   1.0.10
+## ✔ tidyr   1.2.0      ✔ stringr 1.4.1 
+## ✔ readr   2.1.2      ✔ forcats 0.5.2 
+## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+## ✖ dplyr::filter() masks stats::filter()
+## ✖ dplyr::lag()    masks stats::lag()</code></pre>
+<pre class="r"><code>library(readr)
+
+# read the original dataset
+HighwayRail&lt;-read_csv(here::here(&quot;dataset-ignore&quot;, &quot;Highway-Rail_Grade_Crossing_Accident_Data.csv&quot;), show_col_types = FALSE)</code></pre>
+<pre><code>## Warning: One or more parsing issues, see `problems()` for details</code></pre>
+<pre class="r"><code># clean the data, only keep data in MA
+HighwayRail_MA &lt;- HighwayRail %&gt;% filter(`State Name` == &quot;MASSACHUSETTS&quot;) 
+
+# select necessary column names for MA in the original dataset
+MA_select &lt;- HighwayRail_MA %&gt;%
+  select(`Report Year`, Date,   Month, Day, Hour, Minute, `AM/PM`, Time, `Nearest Station`,     Subdivision,    `County Name`, `State Name`,`Highway Name`,`Public/Private Code`, `Public/Private`, `Highway User`, `Estimated Vehicle Speed`,`Vehicle Direction`,  `Highway User Position`,`Equipment Involved`, `Equipment Struck`, Temperature, Visibility, `Weather Condition`, `Number of Locomotive Units`, `Number of Cars`, `Train Speed`, `Estimated/Recorded Speed`,   `Train Direction`, `Crossing Warning Expanded 1`,`Crossing Warning Expanded 2`,`Crossing Warning Expanded 3`,`Crossing Warning Expanded 4`,`Crossing Warning Expanded 5`,`Crossing Warning Expanded 6`,`Crossing Warning Expanded 7`,`Crossing Warning Expanded 8`,`Crossing Warning Expanded 9`, `Crossing Warning Expanded 10`, `Crossing Warning Expanded 11`,  `Crossing Warning Expanded 12`, `Signaled Crossing Warning Code`, `Signaled Crossing Warning`, `Roadway Condition`, `Crossing Warning Location`,    `Warning Connected To Signal`, `Crossing Illuminated`,`User Age`,`User Gender`,`User Struck By Second Train`, `Highway User Action`, `View Obstruction`, `Driver Condition`, `Driver In Vehicle`, `Crossing Users Killed For Reporting Railroad`, `Crossing Users Injured For Reporting Railroad`, `Vehicle Damage Cost`,   `Employees Killed For Reporting Railroad`, `Employees Injured For Reporting Railroad`, `Passengers Killed For Reporting Railroad`, `Passengers Injured For Reporting Railroad`, Narrative)
+
+# fixing the typo 
+library(&#39;stringr&#39;)
+MA_select$`County Name` &lt;- str_replace_all(MA_select$`County Name`, &quot;WORCHESTER&quot;, &quot;WORCESTER&quot;)
+
+write_csv(MA_select, file = here::here(&quot;dataset&quot;, &quot;MA_select.csv&quot;))
+
+save(MA_select, file = here::here(&quot;dataset/MA_select.RData&quot;))</code></pre>
 </div>
 <div id="need-code-for-merging-datasets" class="section level2">
 <h2>[Need code for merging datasets]</h2>
