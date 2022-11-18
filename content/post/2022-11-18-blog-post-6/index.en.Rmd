@@ -1,0 +1,20 @@
+---
+title: Blog Post 6
+author: RRRRR
+date: '2022-11-18'
+slug: []
+categories: []
+tags: []
+description: ~
+toc: yes
+authors: []
+series: []
+lastmod: '2022-11-18T14:24:25-05:00'
+featuredVideo: ~
+featuredImage: ~
+---
+
+## Interactive Plan
+
+We plan to develop an interactive app through R Shiney that will allow people to explore various causes and their impacts on Massachusetts Highway-Rail accidents. The interactive has different graphs as well to better visualize the relationship between accident counts and factors like weather conditions, temperature, visibility, speed, and traffic volume by county separately.
+Here are some of our ideas: 
