@@ -7,9 +7,9 @@ featuredImage: images/data-import-cheatsheet-thumbs.png
 draft: false
 ---
 
-## Section1: Original Dataset
+## Section 1: Original Dataset
 
-The main dataset for our project is the [Highway-Rail Grade Crossing accident data](“https://catalog.data.gov/dataset/highway-rail-grade-crossing-accident-data”). This data was published on Oct. 18, 2022, and was collected by Federal Railroad Administration by collecting the surveys of accidents of HIGHWAY-RAIL GRADE CROSSING ACCIDENT/INCIDENT REPORT. Furthermore, this dataset was collected for the latter researchers to finger out the reasons why some locations have a higher rate of accidents, whether it is because of the visibility or other reasons, such as temperature and the signaling systems, which is exactly what our team is interested in. 
+The main dataset for our project is the [Highway-Rail Grade Crossing accident data](https://catalog.data.gov/dataset/highway-rail-grade-crossing-accident-data). This data was published on Oct. 18, 2022, and was collected by Federal Railroad Administration by collecting the surveys of accidents of HIGHWAY-RAIL GRADE CROSSING ACCIDENT/INCIDENT REPORT. Furthermore, this dataset was collected for the latter researchers to finger out the reasons why some locations have a higher rate of accidents, whether it is because of the visibility or other reasons, such as temperature and the signaling systems, which is exactly what our team is interested in. 
 Since this is an extremely big database (241519 rows and 159 columns), we only focus on the data for Massachusetts ranging from 1975 to 2022 for our project. 
 
 The following are the relevant variables for the original datasets:
@@ -25,7 +25,7 @@ The following are the relevant variables for the original datasets:
 
 As mentioned, the original dataset has a lot of columns with unnecessary columns, which results in missing information that we wanted to omit. Also, as we were only considering one specific state to study its accident numbers and factors that influence the accident rate, we cleaned the data in our next step. 
 
-So, for our EDA, we began by filtering out the data from Massachusetts, and removed variables we viewed as irrelevant to the possible causes of an accident or the coded columns that are repeated, such as types of crossing warning, number of vehicle occupants, reporting parties, etc. Next, since we found a typo of mistakenly recording “WORCESTER” as “WORCHESTER” during our initial data exploration, we used `str_replace_all` function to solve this problem. Finally, we checked that there were no parsing issues in our original cleaned dataset MA_select, which can be found [here]("https://drive.google.com/drive/folders/11KkjZDgEj-kxNw3r9OaeNAkWHwmMqPma"). 
+So, for our EDA, we began by filtering out the data from Massachusetts, and removed variables we viewed as irrelevant to the possible causes of an accident or the coded columns that are repeated, such as types of crossing warning, number of vehicle occupants, reporting parties, etc. Next, since we found a typo of mistakenly recording “WORCESTER” as “WORCHESTER” during our initial data exploration, we used `str_replace_all` function to solve this problem. Finally, we checked that there were no parsing issues in our original cleaned dataset MA_select, which can be found [here](https://drive.google.com/drive/folders/11KkjZDgEj-kxNw3r9OaeNAkWHwmMqPma). 
 
 ## Section 1.2: Potential Limitations of our Dataset
 
@@ -34,7 +34,7 @@ One issue about our main dataset MA_select is that there are a lot of missing va
 
 ## Section 2: Merging Datasets and Cleaning Merged Datasets 
 
-In addition to exploratory data analysis of the original dataset, we wanted to see if traffic volume has any impact on the count of accidents in Massachusettes. In order to do so, we further combine the main dataset with another dataset, the [MA traffic volume](“https://mhd.public.ms2soft.com/tcds/tsearch.asp?loc=Mhd&mod=”) by county. 
+In addition to exploratory data analysis of the original dataset, we wanted to see if traffic volume has any impact on the count of accidents in Massachusettes. In order to do so, we further combine the main dataset with another dataset, the [MA traffic volume](https://mhd.public.ms2soft.com/tcds/tsearch.asp?loc=Mhd&mod=) by county. 
 
 This supplementary data was collected by the Highway Division of the Massachusetts Department of Transportation in order to analyze and predict the traffic flow, which provides instruction on things like extending some roads. And we manually picked the data from the website, calculated the average traffic volume by month, and summarized it in the MA traffic volume dataset. Since the earlier years do not have much meaning in representing the near future situation, we only use the traffic volume data ranging from 2017 to 2022. 
 

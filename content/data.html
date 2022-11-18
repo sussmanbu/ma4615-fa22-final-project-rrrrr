@@ -12,9 +12,9 @@ draft: false
 
 </div>
 
-<div id="section1-original-dataset" class="section level2">
-<h2>Section1: Original Dataset</h2>
-<p>The main dataset for our project is the <a href="“https://catalog.data.gov/dataset/highway-rail-grade-crossing-accident-data”">Highway-Rail Grade Crossing accident data</a>. This data was published on Oct. 18, 2022, and was collected by Federal Railroad Administration by collecting the surveys of accidents of HIGHWAY-RAIL GRADE CROSSING ACCIDENT/INCIDENT REPORT. Furthermore, this dataset was collected for the latter researchers to finger out the reasons why some locations have a higher rate of accidents, whether it is because of the visibility or other reasons, such as temperature and the signaling systems, which is exactly what our team is interested in.
+<div id="section-1-original-dataset" class="section level2">
+<h2>Section 1: Original Dataset</h2>
+<p>The main dataset for our project is the <a href="https://catalog.data.gov/dataset/highway-rail-grade-crossing-accident-data">Highway-Rail Grade Crossing accident data</a>. This data was published on Oct. 18, 2022, and was collected by Federal Railroad Administration by collecting the surveys of accidents of HIGHWAY-RAIL GRADE CROSSING ACCIDENT/INCIDENT REPORT. Furthermore, this dataset was collected for the latter researchers to finger out the reasons why some locations have a higher rate of accidents, whether it is because of the visibility or other reasons, such as temperature and the signaling systems, which is exactly what our team is interested in.
 Since this is an extremely big database (241519 rows and 159 columns), we only focus on the data for Massachusetts ranging from 1975 to 2022 for our project.</p>
 <p>The following are the relevant variables for the original datasets:</p>
 <ul>
@@ -29,7 +29,7 @@ Since this is an extremely big database (241519 rows and 159 columns), we only f
 <div id="section-1.1-cleaning-and-loading-the-original-dataset" class="section level2">
 <h2>Section 1.1: Cleaning and Loading the Original Dataset</h2>
 <p>As mentioned, the original dataset has a lot of columns with unnecessary columns, which results in missing information that we wanted to omit. Also, as we were only considering one specific state to study its accident numbers and factors that influence the accident rate, we cleaned the data in our next step.</p>
-<p>So, for our EDA, we began by filtering out the data from Massachusetts, and removed variables we viewed as irrelevant to the possible causes of an accident or the coded columns that are repeated, such as types of crossing warning, number of vehicle occupants, reporting parties, etc. Next, since we found a typo of mistakenly recording “WORCESTER” as “WORCHESTER” during our initial data exploration, we used <code>str_replace_all</code> function to solve this problem. Finally, we checked that there were no parsing issues in our original cleaned dataset MA_select, which can be found <a href="%22https://drive.google.com/drive/folders/11KkjZDgEj-kxNw3r9OaeNAkWHwmMqPma%22">here</a>.</p>
+<p>So, for our EDA, we began by filtering out the data from Massachusetts, and removed variables we viewed as irrelevant to the possible causes of an accident or the coded columns that are repeated, such as types of crossing warning, number of vehicle occupants, reporting parties, etc. Next, since we found a typo of mistakenly recording “WORCESTER” as “WORCHESTER” during our initial data exploration, we used <code>str_replace_all</code> function to solve this problem. Finally, we checked that there were no parsing issues in our original cleaned dataset MA_select, which can be found <a href="https://drive.google.com/drive/folders/11KkjZDgEj-kxNw3r9OaeNAkWHwmMqPma">here</a>.</p>
 </div>
 <div id="section-1.2-potential-limitations-of-our-dataset" class="section level2">
 <h2>Section 1.2: Potential Limitations of our Dataset</h2>
@@ -37,7 +37,7 @@ Since this is an extremely big database (241519 rows and 159 columns), we only f
 </div>
 <div id="section-2-merging-datasets-and-cleaning-merged-datasets" class="section level2">
 <h2>Section 2: Merging Datasets and Cleaning Merged Datasets</h2>
-<p>In addition to exploratory data analysis of the original dataset, we wanted to see if traffic volume has any impact on the count of accidents in Massachusettes. In order to do so, we further combine the main dataset with another dataset, the <a href="“https://mhd.public.ms2soft.com/tcds/tsearch.asp?loc=Mhd&amp;mod=”">MA traffic volume</a> by county.</p>
+<p>In addition to exploratory data analysis of the original dataset, we wanted to see if traffic volume has any impact on the count of accidents in Massachusettes. In order to do so, we further combine the main dataset with another dataset, the <a href="https://mhd.public.ms2soft.com/tcds/tsearch.asp?loc=Mhd&amp;mod=">MA traffic volume</a> by county.</p>
 <p>This supplementary data was collected by the Highway Division of the Massachusetts Department of Transportation in order to analyze and predict the traffic flow, which provides instruction on things like extending some roads. And we manually picked the data from the website, calculated the average traffic volume by month, and summarized it in the MA traffic volume dataset. Since the earlier years do not have much meaning in representing the near future situation, we only use the traffic volume data ranging from 2017 to 2022.</p>
 <p>The following are the variables in the MA traffic volume dataset:</p>
 <ul>
