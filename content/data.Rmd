@@ -7,78 +7,59 @@ featuredImage: images/data-import-cheatsheet-thumbs.png
 draft: false
 ---
 
-* 
+## Section1: Original Dataset
 
-This comes from the file `content/data.Rmd`.
+The main dataset for our project is the [Highway-Rail Grade Crossing accident data](“https://catalog.data.gov/dataset/highway-rail-grade-crossing-accident-data”). This data was published on Oct. 18, 2022, and was collected by Federal Railroad Administration by collecting the surveys of accidents of HIGHWAY-RAIL GRADE CROSSING ACCIDENT/INCIDENT REPORT. Furthermore, this dataset was collected for the latter researchers to finger out the reasons why some locations have a higher rate of accidents, whether it is because of the visibility or other reasons, such as temperature and the signaling systems, which is exactly what our team is interested in. 
+Since this is an extremely big database (241519 rows and 159 columns), we only focus on the data for Massachusetts ranging from 1975 to 2022 for our project. 
 
-Your first steps in this project will be to find data to work on.
+The following are the relevant variables for the original datasets:
 
-I recommend trying to find data that interests you and that you are knowledgeable about. A bad example would be if you have no interest in video games but your data set is about video games. I also recommend finding data that is related to current events, social justice, and other areas that have an impact.
+* `Report Years`, `Date`, `Month`, `Day`, `Hour`, `Minute`, `AM/PM`, `Time`: accurate time elements of when the accidents happened
+* `County Name`: the county where the accidents took places
+* `Estimated Vehicle Speed`: the vehicle speed in miles per hour when the accidents took place 
+* `Temperature`: the temperature (in Fahrenheit) at which the accidents took place
+* `Visibility`: this visibility during the time at which the accidents took place. Possible values are `Day`, `Dark`, `Dawn`, `Dusk`
+* `Weather Condition`: the weather condition at the places where the acccidents took place. Possible values are `Clear`, `Cloundy`, `Rain`, `Snow`, `Sleet`
 
-You are __not__ allowed to work on COVID data.
+## Section 1.1: Cleaning and Loading the Original Dataset
 
-Initially, you will study _one dataset_ but later you will need to combine that data with another dataset. For this reason, I recommend finding data that has some date and/or location components. These types of data are conducive to interesting visualizations and analysis and you can also combine this data with other data that also has a date or location variable.
-Data from the census, weather data, economic data, are all relatively easy to combine with other data with time/location components.
+As mentioned, the original dataset has a lot of columns with unnecessary columns, which results in missing information that we wanted to omit. Also, as we were only considering one specific state to study its accident numbers and factors that influence the accident rate, we cleaned the data in our next step. 
 
+So, for our EDA, we began by filtering out the data from Massachusetts, and removed variables we viewed as irrelevant to the possible causes of an accident or the coded columns that are repeated, such as types of crossing warning, number of vehicle occupants, reporting parties, etc. Next, since we found a typo of mistakenly recording “WORCESTER” as “WORCHESTER” during our initial data exploration, we used `str_replace_all` function to solve this problem. Finally, we checked that there were no parsing issues in our original cleaned dataset MA_select, which can be found [here]("https://drive.google.com/drive/folders/11KkjZDgEj-kxNw3r9OaeNAkWHwmMqPma"). 
 
-## Where to keep data?
+## Section 1.2: Potential Limitations of our Dataset
 
-
-Below 50mb: In `dataset` folder
-
-Above 50mb: In `dataset_ignore` folder. This folder will be ignored by `git` so you'll have to manually sync these files across your team.
-
-### Sharing your data
+One issue about our main dataset MA_select is that there are a lot of missing values or unknown for some variables. This happens even for those variables that we are interested in. Therefore, we will need to drop those values and this may affect the performance of our analysis. In addition, there are confounding variables that are not in the main dataset, which is the traffic volume variable. Luckily, we found another dataset that records the traffic volume of counties in Massachusetts. However, even the traffic volume dataset has its own limitations. It does not have data regarding some counties, such as Suffolk, so for the traffic volume, we only focus on those counties that have data on traffic volume, which is already enough to study the effect of traffic volume for that individual counties. 
 
 
-For small datasets (<50mb), you can use the `dataset` folder that is tracked by github. Add the files just like you would any other file.
+## Section 2: Merging Datasets and Cleaning Merged Datasets 
 
-**Do not** use a folder named `data`.
-This folder is reserved by `hugo`.
-If you create a folder named `data` this will cause problems.
+In addition to exploratory data analysis of the original dataset, we wanted to see if traffic volume has any impact on the count of accidents in Massachusettes. In order to do so, we further combine the main dataset with another dataset, the [MA traffic volume](“https://mhd.public.ms2soft.com/tcds/tsearch.asp?loc=Mhd&mod=”) by county. 
 
-For larger datasets, you'll need to create a new folder in the project root directory named `dataset-ignore`. This will be ignored by git (based off the `.gitignore` file in the project root directory) which will help you avoid issues with Github's size limits. Your team will have to manually make sure the data files in `dataset-ignore` are synced across team members.
+This supplementary data was collected by the Highway Division of the Massachusetts Department of Transportation in order to analyze and predict the traffic flow, which provides instruction on things like extending some roads. And we manually picked the data from the website, calculated the average traffic volume by month, and summarized it in the MA traffic volume dataset. Since the earlier years do not have much meaning in representing the near future situation, we only use the traffic volume data ranging from 2017 to 2022. 
 
-Your [load_and_clean_data.R](/load_and_clean_data.R) file is how you will load and clean your data. Here is a an example of a very simple one.
+The following are the variables in the MA traffic volume dataset: 
 
-```{r}
-source(
-  here::here("static", "load_and_clean_data.R"),
-  echo = TRUE # Use echo=FALSE or omit it to avoid code output  
-)
-```
+* `County`: counties from Massachusetts that correspond to MA_select to assure the same research subject
 
-Note how I use the `here::here` function from the [`here` package](https://here.r-lib.org/articles/here.html) to avoid path problems.
-This function is used to specify directories within the project's root directory.
-You should never use absolute paths (eg. `/Users/danielsussman/path/to/project/` or `C:\\MA415\\Final_Project\\`) and using `here` ensures that it doesn't matter what the current working directory is as long as you have this RStudio Project open.
+* `Year`, `Month`: the specific year and month at the date when the traffic volume was collected
 
+* `Count`: the average number of cars that count as the traffic volume during the month 
+
+## Section 3: R Packages
+
+We only use one additional R packages when cleaning our dataset.
+
+* stringr: making it easy to work with strings – we use it to fix the typo problem 
+
+## Section 4: Code for Cleaning the Datasets
+
+Our load_and_clean_data.R details of the original data MA_select can be found in detail below. We used Excel to manually combine the data points from the website for the MA traffic volume dataset, so no R code is provided here. 
+
+
+[Need code for merging datasets]
 ----
-
-
-
-## Files in static
-
-### `load_and_clean_data.R`
-
-The idea behind this file is that someone coming to your website could largely replicate your analyses after running this script on the original data sets to clean them.
-This file might create a derivative data set that you then use for your subsequent analysis.
-Note that you don't need to run this script from every post/page.
-Instead, you can load in the results of this script, which could be plain text files or `.RData` files. In your data page you'll describe how these results were created. If you have a very large data set, you might save smaller data sets that you can use for exploration purposes.
-To link to this file, you can use `[cleaning script](/load_and_clean_data.R)`. 
-
-
-When you are loading in data, I recommend using the `here::here` function to specify the file path. This function is used to specify a path relative to your project's root directory. Hence, you can read a file using eg, `read_csv(here::here("dataset/data_file.csv"))`.
-
-
-### Shiny Interactive
-
-If you are using a shiny interactive, you'll need to keep that in a separate folder (i.e. not in `static` or `content`). For the shiny interactive you'll need to publish the app on `shinyapps.io` where the app can be run. When you publish, make sure to include any data sets you are loading in among the files you publish since those datasets will need to be loaded by your app. 
-
-
-
-
-
-----
+[Delete before the final version ]
 
 ## Rubric: On this page
 
