@@ -18,3 +18,8 @@ MA_select$`County Name` <- str_replace_all(MA_select$`County Name`, "WORCHESTER"
 write_csv(MA_select, file = here::here("dataset", "MA_select.csv"))
 
 save(MA_select, file = here::here("dataset/MA_select.RData"))
+
+# read the combined dataset
+TrafficVolume <- read_csv(here::here("dataset", "Traffic Volume.csv"), show_col_types = FALSE)
+save(TrafficVolume, file = here::here("dataset/MA_select.RData"))
+

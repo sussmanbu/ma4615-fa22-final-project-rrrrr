@@ -33,12 +33,12 @@ Since this is an extremely big database (241519 rows and 159 columns), we only f
 </div>
 <div id="section-1.2-potential-limitations-of-our-dataset" class="section level2">
 <h2>Section 1.2: Potential Limitations of our Dataset</h2>
-<p>One issue about our main dataset MA_select is that there are a lot of missing values or unknown for some variables. This happens even for those variables that we are interested in. Therefore, we will need to drop those values and this may affect the performance of our analysis. In addition, there are confounding variables that are not in the main dataset, which is the traffic volume variable. Luckily, we found another dataset that records the traffic volume of counties in Massachusetts. However, even the traffic volume dataset has its own limitations. It does not have data regarding some counties, such as Suffolk, so for the traffic volume, we only focus on those counties that have data on traffic volume, which is already enough to study the effect of traffic volume for that individual counties.</p>
+<p>One issue about our main dataset MA_select is that there are a lot of missing values or unknown for some variables. This happens even for those variables that we are interested in. Therefore, we will need to drop those values and this may affect the performance of our analysis. In addition, there are confounding variables that are not in the main dataset, which is the traffic volume variable. Luckily, we found another dataset that records the traffic volume of counties in Massachusetts. However, even the traffic volume dataset has its own limitations. It does not have data regarding some counties, such as Suffolk, so for the traffic volume, we only focus on those counties that have data on traffic volume. However, when we only look at the years from 2017 to 2022, there are only around 60 pieces of data. As a result, on average, there is only 1 piece of data per month. Therefore, there may not be enough data in the main datasets for us to perform regression analysis. To still see the relationship between the traffic volume and the accidents count, we plan to draw series plots to see if there are similar trends between them.</p>
 </div>
 <div id="section-2-merging-datasets-and-cleaning-merged-datasets" class="section level2">
 <h2>Section 2: Merging Datasets and Cleaning Merged Datasets</h2>
 <p>In addition to exploratory data analysis of the original dataset, we wanted to see if traffic volume has any impact on the count of accidents in Massachusettes. In order to do so, we further combine the main dataset with another dataset, the <a href="https://mhd.public.ms2soft.com/tcds/tsearch.asp?loc=Mhd&amp;mod=">MA traffic volume</a> by county.</p>
-<p>This supplementary data was collected by the Highway Division of the Massachusetts Department of Transportation in order to analyze and predict the traffic flow, which provides instruction on things like extending some roads. And we manually picked the data from the website, calculated the average traffic volume by month, and summarized it in the MA traffic volume dataset. Since the earlier years do not have much meaning in representing the near future situation, we only use the traffic volume data ranging from 2017 to 2022.</p>
+<p>This supplementary data was collected by the Highway Division of the Massachusetts Department of Transportation in order to analyze and predict the traffic flow, which provides instruction on things like extending some roads. And we manually picked the data from the website, calculated the average traffic volume by month, and summarized it in the MA traffic volume dataset. Since the earlier years do not have much meaning in representing the near future situation, we only use the traffic volume data ranging from 2017 to 2022. The TrafficVolume dataset can be found <a href="https://docs.google.com/spreadsheets/d/1mIT5NyYcTCREjJJ238Hj4ZIP0e5PvEb5-W9vbEptRgs/edit#gid=0">here</a></p>
 <p>The following are the variables in the MA traffic volume dataset:</p>
 <ul>
 <li><p><code>County</code>: counties from Massachusetts that correspond to MA_select to assure the same research subject</p></li>
@@ -55,7 +55,7 @@ Since this is an extremely big database (241519 rows and 159 columns), we only f
 </div>
 <div id="section-4-code-for-cleaning-the-datasets" class="section level2">
 <h2>Section 4: Code for Cleaning the Datasets</h2>
-<p>Our load_and_clean_data.R details of the original data MA_select can be found in detail below. We used Excel to manually combine the data points from the website for the MA traffic volume dataset, so no R code is provided here.</p>
+<p>Our load_and_clean_data.R details of the original data MA_select can be found in detail below. We used Excel to manually combine the data points from the website for the MA traffic volume dataset, and saved the csv file here.</p>
 <pre class="r"><code>library(tidyverse)</code></pre>
 <pre><code>## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ──
 ## ✔ ggplot2 3.3.6      ✔ purrr   0.3.4 
@@ -83,10 +83,12 @@ MA_select$`County Name` &lt;- str_replace_all(MA_select$`County Name`, &quot;WOR
 
 write_csv(MA_select, file = here::here(&quot;dataset&quot;, &quot;MA_select.csv&quot;))
 
-save(MA_select, file = here::here(&quot;dataset/MA_select.RData&quot;))</code></pre>
-</div>
-<div id="need-code-for-merging-datasets" class="section level2">
-<h2>[Need code for merging datasets]</h2>
+save(MA_select, file = here::here(&quot;dataset/MA_select.RData&quot;))
+
+# read the combined dataset
+TrafficVolume &lt;- read_csv(here::here(&quot;dataset&quot;, &quot;Traffic Volume.csv&quot;), show_col_types = FALSE)
+save(TrafficVolume, file = here::here(&quot;dataset/MA_select.RData&quot;))</code></pre>
+<hr />
 <p>[Delete before the final version ]</p>
 </div>
 <div id="rubric-on-this-page" class="section level2">
