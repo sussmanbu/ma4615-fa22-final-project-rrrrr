@@ -89,16 +89,14 @@ Traffic_Volume &lt;- read_csv(here::here(&quot;dataset&quot;, &quot;Traffic_Volu
 
 Combined &lt;- inner_join(Traffic_Volume, MA_select3, by = &quot;MY&quot;) %&gt;% select(MY, Avg_traffic_volume, `Weather Condition`)
 
-(
-  Combined %&gt;% group_by(MY) %&gt;% mutate(count = n()) %&gt;% ungroup() %&gt;% ggplot(aes(x = MY, y = Avg_traffic_volume))+ geom_area(fill = &quot;blue&quot;, alpha = .2)
-)</code></pre>
+
+
+Combined %&gt;% ggplot(aes(MY, Avg_traffic_volume, color = `Weather Condition`)) + geom_point() + geom_line(aes(group = `Weather Condition`)) </code></pre>
 <p><img src="/analysis_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
-<pre class="r"><code>Combined %&gt;% ggplot(aes(MY, Avg_traffic_volume, color = `Weather Condition`)) + geom_point() + geom_line(aes(group = `Weather Condition`)) </code></pre>
-<p><img src="/analysis_files/figure-html/unnamed-chunk-4-2.png" width="672" /></p>
 <pre class="r"><code>Combined %&gt;% filter(`Weather Condition` == &quot;Clear&quot;) %&gt;% ggplot(aes(MY, Avg_traffic_volume)) + geom_point() + geom_line(aes(group = 1)) </code></pre>
-<p><img src="/analysis_files/figure-html/unnamed-chunk-4-3.png" width="672" /></p>
+<p><img src="/analysis_files/figure-html/unnamed-chunk-4-2.png" width="672" /></p>
 <pre class="r"><code>Combined %&gt;% filter(`Weather Condition` == &quot;Clear&quot;) %&gt;% group_by(MY) %&gt;% mutate(count = n()) %&gt;% ungroup() %&gt;% ggplot(aes(MY, count)) + geom_point() + geom_line(aes(group = 1)) </code></pre>
-<p><img src="/analysis_files/figure-html/unnamed-chunk-4-4.png" width="672" />
+<p><img src="/analysis_files/figure-html/unnamed-chunk-4-3.png" width="672" />
 * After we plot the graphs, we don’t see any patterns between traffic volume and accident counts. To prove our findings, we plan to run regression to come up with a conclusion.
 ## Section 3: Modeling</p>
 <pre class="r"><code>MA_regression &lt;- MA_select %&gt;% group_by(`County Name`) %&gt;% mutate(Accident_Count = n()) %&gt;% select(`County Name`, Accident_Count, `Train Speed`, `Estimated Vehicle Speed`)
@@ -160,51 +158,4 @@ Combined &lt;- inner_join(Traffic_Volume, MA_select3, by = &quot;MY&quot;) %&gt;
 <li><p>There are also flaws in our supportive dataset. The traffic volume data of each targeted county are collected in months instead of days while the weather condition of each accident is collected individually. So we can only assume the most common weather conditions for each month to represent this month’s weather conditions. The lack of precision of the traffic volume data collected by the Massachusetts government greatly influenced the accuracy of our analysis.</p></li>
 </ul>
 <hr />
-</div>
-<div id="rubric-on-this-page" class="section level2">
-<h2>Rubric: On this page</h2>
-<p>you will</p>
-<ul>
-<li>Introduce what motivates your Data Analysis (DA)
-<ul>
-<li>Which variables and relationships are you most interested in?</li>
-<li>What questions are you interested in answering?</li>
-</ul></li>
-<li>Breadth of the DA
-<ul>
-<li>Make sure that you ask enough initial questions to explore the different variables in your data.</li>
-<li>i.e. Do you explore more than just one or two variables? Do you explore a few different relationships or many?</li>
-</ul></li>
-<li>Depth of the DA
-<ul>
-<li>When you answer one question, usually more questions arise as well.</li>
-<li>The depth of the DA is about coming up with and exploring the answers to these questions, often iterating the process a few times.</li>
-</ul></li>
-<li>Modeling and Inference
-<ul>
-<li>You should also include some kind of formal statistical model and/or inference. This could be a linear regression, logistic regression, hypothesis testing etc.</li>
-<li>Explain the techniques you used for validating your results.</li>
-<li>Describe the results of your modelling and make sure to give a sense of the uncertainty in your estimates and conclusions.</li>
-</ul></li>
-<li>Explain the flaws and limitations of your analysis
-<ul>
-<li>Are there some assumptions that you needed to make that might not hold? Is there other data that would help to answer your questions? …</li>
-</ul></li>
-<li>Clarity Figures
-<ul>
-<li>Are your figures/tables/results easy to read, informative, without problems like overplotting, hard-to-read labels, etc?</li>
-<li>Each figure should provide a key insight. Too many figures or other data summaries can detract from this.</li>
-</ul></li>
-<li>Clarity of Explanations
-<ul>
-<li>Do you introduce why you are doing each analysis?</li>
-<li>How well do you explain each figure/result?</li>
-<li>Do you provide interpretations that suggest further analysis or explanations for observed phenomenon?</li>
-</ul></li>
-<li>Organization and cleanliness.
-<ul>
-<li>Make sure to remove excessive warnings, use clean easy-to-read code, organize with sections or multiple pages, use bullets, etc.</li>
-</ul></li>
-</ul>
-<p><strong>NOTE</strong>: Your Data Analysis can be broken up into multiple pages if that helps with your organization.</p>
 </div>

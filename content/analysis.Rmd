@@ -65,9 +65,7 @@ MA_select3 <- MA_select %>%
 
 Combined <- inner_join(Traffic_Volume, MA_select3, by = "MY") %>% select(MY, Avg_traffic_volume, `Weather Condition`)
 
-(
-  Combined %>% group_by(MY) %>% mutate(count = n()) %>% ungroup() %>% ggplot(aes(x = MY, y = Avg_traffic_volume))+ geom_area(fill = "blue", alpha = .2)
-)
+
 
 Combined %>% ggplot(aes(MY, Avg_traffic_volume, color = `Weather Condition`)) + geom_point() + geom_line(aes(group = `Weather Condition`)) 
 
@@ -97,37 +95,3 @@ MA_regression <- MA_select %>% group_by(`County Name`) %>% mutate(Accident_Count
 * There are also flaws in our supportive dataset. The traffic volume data of each targeted county are collected in months instead of days while the weather condition of each accident is collected individually. So we can only assume the most common weather conditions for each month to represent this month's weather conditions. The lack of precision of the traffic volume data collected by the Massachusetts government greatly influenced the accuracy of our analysis.
 
 -------
-
-
-## Rubric: On this page
-
-you will
-
-
-* Introduce what motivates your Data Analysis (DA)
-  * Which variables and relationships are you most interested in?
-  * What questions are you interested in answering?
-* Breadth of the DA
-  * Make sure that you ask enough initial questions to explore the different variables in your data.
-  * i.e. Do you explore more than just one or two variables? Do you explore a few different relationships or many?
-* Depth of the DA
-  * When you answer one question, usually more questions arise as well. 
-  * The depth of the DA is about coming up with and exploring the answers to these questions, often iterating the process a few times.
-* Modeling and Inference 
-  * You should also include some kind of formal statistical model and/or inference. This could be a linear regression, logistic regression, hypothesis testing etc.
-  * Explain the techniques you used for validating your results.
-  * Describe the results of your modelling and make sure to give a sense of the uncertainty in your estimates and conclusions.
-* Explain the flaws and limitations of your analysis
-  * Are there some assumptions that you needed to make that might not hold? Is there other data that would help to answer your questions? ...
-* Clarity Figures
-  * Are your figures/tables/results easy to read, informative, without problems like overplotting, hard-to-read labels, etc?
-  * Each figure should provide a key insight. Too many figures or other data summaries can detract from this.
-* Clarity of Explanations
-  * Do you introduce why you are doing each analysis?
-  * How well do you explain each figure/result?
-  * Do you provide interpretations that suggest further analysis or explanations for observed phenomenon?
-* Organization and cleanliness.
-  * Make sure to remove excessive warnings, use clean easy-to-read code, organize with sections or multiple pages, use bullets, etc.
-  
-  
-**NOTE**: Your Data Analysis can be broken up into multiple pages if that helps with your organization.
