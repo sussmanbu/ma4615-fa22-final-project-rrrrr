@@ -20,6 +20,6 @@ write_csv(MA_select, file = here::here("dataset", "MA_select.csv"))
 save(MA_select, file = here::here("dataset/MA_select.RData"))
 
 # read the combined dataset
-TrafficVolume <- read_csv(here::here("dataset", "Traffic Volume.csv"), show_col_types = FALSE)
-save(TrafficVolume, file = here::here("dataset/MA_select.RData"))
+Traffic_Volume <- read_csv(here::here("dataset", "Traffic_Volume.csv"))
+save(Traffic_Volume, file = here::here("dataset/Traffic_Volume.RData"))
 
