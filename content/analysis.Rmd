@@ -21,9 +21,12 @@ Based on our initial questions, we looked at the number of accidents against fac
 suppressPackageStartupMessages(library(tidyverse)) 
 MA_select <- read_csv(here::here("dataset", "MA_select.csv"))
 
-MA_select2 <- MA_select %>% filter(!is.na(`Weather Condition`) & !is.na(Temperature) & !is.na(Visibility), Temperature <= 104)
+MA_select2 <- MA_select %>% 
+  filter(!is.na(`Weather Condition`) & !is.na(Temperature) & !is.na(Visibility), Temperature <= 104)
 
-MA_select2 %>% group_by(`Weather Condition`) %>% mutate(Accident_Count = n()) %>% 
+MA_select2 %>% 
+  group_by(`Weather Condition`) %>% 
+  mutate(Accident_Count = n()) %>% 
   ggplot(aes(x = reorder(`Weather Condition`, Temperature, decreasing=FALSE), y = Temperature, fill = Accident_Count)) + geom_boxplot() + labs(x = "Weather Condition")
 ```
 
@@ -32,10 +35,12 @@ MA_select2 %>% group_by(`Weather Condition`) %>% mutate(Accident_Count = n()) %>
 
 ## Section 2.1.2: Accident Counts, Visibility, and Weather Conditions
 ```{r}
-MA_select %>% group_by(`Weather Condition`) %>% mutate(Accident_Count = n()) %>% 
+MA_select %>% group_by(`Weather Condition`) %>% 
+  mutate(Accident_Count = n()) %>% 
   ggplot(aes(x = `Weather Condition`, fill = Visibility)) + geom_bar() + labs(y = "Accident_Count")
 
-MA_select %>% group_by(`Weather Condition`) %>% mutate(Accident_Count = n()) %>% 
+MA_select %>% group_by(`Weather Condition`) %>% 
+  mutate(Accident_Count = n()) %>% 
   ggplot(aes(x = `Weather Condition`, fill = Visibility)) + geom_bar(position = "fill") + labs(y = "Accident_Count")
 ```
 
@@ -44,7 +49,9 @@ MA_select %>% group_by(`Weather Condition`) %>% mutate(Accident_Count = n()) %>%
 
 ## Section 2.2.3: Accident Counts, Weather Conditions, and Roadway Conditions
 ```{r}
-MA_select %>% filter(!is.na(`Roadway Condition`)) %>% group_by(`Roadway Condition`) %>% mutate(Accident_Count = n()) %>% 
+MA_select %>% filter(!is.na(`Roadway Condition`)) %>% 
+  group_by(`Roadway Condition`) %>% 
+  mutate(Accident_Count = n()) %>% 
   ggplot(aes(x = `Roadway Condition`)) + geom_bar() +
   facet_grid(~as.factor(`Weather Condition`)) 
 ```
@@ -63,24 +70,37 @@ MA_select3 <- MA_select %>%
   filter(`Report Year` %in% c(2017, 2018, 2019, 2020, 2021, 2022)) %>% 
   unite('MY', `Report Year`, Month, remove = FALSE)
 
-Combined <- inner_join(Traffic_Volume, MA_select3, by = "MY") %>% select(MY, Avg_traffic_volume, `Weather Condition`)
+Combined <- inner_join(Traffic_Volume, MA_select3, by = "MY") %>% 
+  select(MY, Avg_traffic_volume, `Weather Condition`)
 
+Combined %>% 
+  ggplot(aes(MY, Avg_traffic_volume, color = `Weather Condition`)) + geom_point() + geom_line(aes(group = `Weather Condition`)) 
 
+Combined %>% 
+  filter(`Weather Condition` == "Clear") %>% 
+  ggplot(aes(MY, Avg_traffic_volume)) + geom_point() + geom_line(aes(group = 1)) 
 
-Combined %>% ggplot(aes(MY, Avg_traffic_volume, color = `Weather Condition`)) + geom_point() + geom_line(aes(group = `Weather Condition`)) 
-
-Combined %>% filter(`Weather Condition` == "Clear") %>% ggplot(aes(MY, Avg_traffic_volume)) + geom_point() + geom_line(aes(group = 1)) 
-
-Combined %>% filter(`Weather Condition` == "Clear") %>% group_by(MY) %>% mutate(count = n()) %>% ungroup() %>% ggplot(aes(MY, count)) + geom_point() + geom_line(aes(group = 1)) 
+Combined %>% 
+  filter(`Weather Condition` == "Clear") %>% 
+  group_by(MY) %>% 
+  mutate(count = n()) %>% 
+  ungroup() %>% 
+  ggplot(aes(MY, count)) + geom_point() + geom_line(aes(group = 1)) 
 ```
 * After we plot the graphs, we don't see any patterns between traffic volume and accident counts. To prove our findings, we plan to run regression to come up with a conclusion. 
+
 ## Section 3: Modeling
 
 ```{r}
-MA_regression <- MA_select %>% group_by(`County Name`) %>% mutate(Accident_Count = n()) %>% select(`County Name`, Accident_Count, `Train Speed`, `Estimated Vehicle Speed`)
+MA_regression <- MA_select %>% 
+  group_by(`County Name`) %>% 
+  mutate(Accident_Count = n()) %>% 
+  select(`County Name`, Accident_Count, `Train Speed`, `Estimated Vehicle Speed`)
 
 (
-  MA_reg <- lm(Accident_Count ~ `Train Speed` + `Estimated Vehicle Speed`, data = MA_regression) %>% broom:: tidy() %>% knitr::kable(format = "markdown")
+  MA_reg <- lm(Accident_Count ~ `Train Speed` + `Estimated Vehicle Speed`, data = MA_regression) %>%
+    broom:: tidy() %>% 
+    knitr::kable(format = "markdown")
 )
 ```
 
