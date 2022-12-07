@@ -92,50 +92,6 @@ MA_select2 %&gt;%
 </div>
 <div id="section-2.2-adding-traffic-volume-to-our-analysis" class="section level2">
 <h2>Section 2.2: Adding Traffic Volume to Our Analysis</h2>
-<pre class="r"><code>library(&#39;tidyr&#39;)
-
-Traffic_Volume &lt;- read_csv(here::here(&quot;dataset&quot;, &quot;Traffic_Volume.csv&quot;))</code></pre>
-<pre><code>## Rows: 61 Columns: 2
-## ── Column specification ────────────────────────────────────────────────────────
-## Delimiter: &quot;,&quot;
-## chr (1): MY
-## dbl (1): Avg_traffic_volume
-## 
-## ℹ Use `spec()` to retrieve the full column specification for this data.
-## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
-<pre class="r"><code>MA_select3 &lt;- MA_select %&gt;% 
-  filter(`Report Year` %in% c(2017, 2018, 2019, 2020, 2021, 2022)) %&gt;% 
-  unite(&#39;MY&#39;, `Report Year`, Month, remove = FALSE)
-
-Combined &lt;- inner_join(Traffic_Volume, MA_select3, by = &quot;MY&quot;) %&gt;% 
-  select(MY, Avg_traffic_volume, `Weather Condition`)
-
-Combined %&gt;% 
-  ggplot(aes(MY, Avg_traffic_volume, color = `Weather Condition`)) + 
-  geom_point() + 
-  geom_line(aes(group = `Weather Condition`)) + 
-  coord_flip()</code></pre>
-<p><img src="/analysis_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
-<pre class="r"><code>Combined %&gt;% 
-  filter(`Weather Condition` == &quot;Clear&quot;) %&gt;% 
-  ggplot(aes(MY, Avg_traffic_volume)) + 
-  geom_point() + 
-  geom_line(aes(group = 1)) +
-  coord_flip()</code></pre>
-<p><img src="/analysis_files/figure-html/unnamed-chunk-4-2.png" width="672" /></p>
-<pre class="r"><code>Combined %&gt;% 
-  filter(`Weather Condition` == &quot;Clear&quot;) %&gt;% 
-  group_by(MY) %&gt;% 
-  mutate(count = n()) %&gt;% 
-  ungroup() %&gt;% 
-  ggplot(aes(MY, count)) + 
-  geom_point() + 
-  geom_line(aes(group = 1)) + 
-  coord_flip()</code></pre>
-<p><img src="/analysis_files/figure-html/unnamed-chunk-4-3.png" width="672" /></p>
-<ul>
-<li>After we plot the graphs, we don’t see any patterns between traffic volume and accident counts. To prove our findings, we plan to run regression to come up with a conclusion.</li>
-</ul>
 <pre class="r"><code>library(tidyverse)
 Traffic_Volume &lt;- read_csv(here::here(&quot;dataset&quot;, &quot;Traffic_Volume.csv&quot;))</code></pre>
 <pre><code>## Rows: 61 Columns: 2
@@ -151,10 +107,104 @@ Traffic_Volume &lt;- read_csv(here::here(&quot;dataset&quot;, &quot;Traffic_Volu
 Traffic_Volume2 %&gt;% ggplot(aes(x = Month, y = Avg_traffic_volume)) + 
   geom_point() +
   facet_grid(~as.factor(Year)) </code></pre>
+<p><img src="/analysis_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<pre class="r"><code>library(&#39;tidyr&#39;)
+
+MA_select3 &lt;- MA_select %&gt;% 
+  filter(`Report Year` %in% c(2017, 2018, 2019, 2020, 2021, 2022)) %&gt;% 
+  unite(&#39;MY&#39;, `Report Year`, Month, remove = FALSE)
+
+Combined &lt;- inner_join(Traffic_Volume, MA_select3, by = &quot;MY&quot;) %&gt;% 
+  select(MY, Avg_traffic_volume, `Weather Condition`)
+
+Combined %&gt;% 
+  ggplot(aes(MY, Avg_traffic_volume, color = `Weather Condition`)) + 
+  geom_point() + 
+  geom_line(aes(group = `Weather Condition`)) + 
+  coord_flip()</code></pre>
 <p><img src="/analysis_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<pre class="r"><code>Combined %&gt;% 
+  filter(`Weather Condition` == &quot;Clear&quot;) %&gt;% 
+  ggplot(aes(MY, Avg_traffic_volume)) + 
+  geom_point() + 
+  geom_line(aes(group = 1)) +
+  coord_flip()</code></pre>
+<p><img src="/analysis_files/figure-html/unnamed-chunk-5-2.png" width="672" /></p>
+<pre class="r"><code>Combined %&gt;% 
+  filter(`Weather Condition` == &quot;Clear&quot;) %&gt;% 
+  group_by(MY) %&gt;% 
+  mutate(count = n()) %&gt;% 
+  ungroup() %&gt;% 
+  ggplot(aes(MY, count)) + 
+  geom_point() + 
+  geom_line(aes(group = 1)) + 
+  coord_flip()</code></pre>
+<p><img src="/analysis_files/figure-html/unnamed-chunk-5-3.png" width="672" /></p>
+<ul>
+<li>After we plot the graphs, we don’t see any patterns between traffic volume and accident counts. To prove our findings, we plan to run regression to come up with a conclusion.</li>
+</ul>
+<pre class="r"><code>library(tidyverse)
+library(readr)
+accident &lt;- MA_select %&gt;% 
+  select(`Report Year`, Month, `Weather Condition`) %&gt;% 
+  filter(`Report Year` %in% c(2017, 2018, 2019, 2020, 2021, 2022)) %&gt;% 
+  group_by(`Report Year`, Month) %&gt;%  
+  mutate(total = n()) %&gt;% 
+  mutate(MY = str_c(`Report Year`, Month, sep = &quot;_&quot;)) %&gt;% 
+  arrange(`Report Year`, Month) 
+Clear &lt;- ifelse(accident$`Weather Condition` == &quot;Clear&quot;, 1, 0)
+accident2 &lt;- cbind(accident, Clear) %&gt;% 
+  mutate(prop = ...6/total) %&gt;% 
+  group_by(`Report Year`, Month) %&gt;% 
+  mutate(Clear_prop = sum(prop)) %&gt;% ungroup()</code></pre>
+<pre><code>## New names:
+## • `` -&gt; `...6`</code></pre>
+<pre class="r"><code>Accident_Traffic &lt;- inner_join(Traffic_Volume2, accident2, by = &quot;MY&quot;) %&gt;%
+  filter(`Weather Condition` == &quot;Clear&quot;)</code></pre>
 </div>
 <div id="section-3-modelling" class="section level2">
 <h2>Section 3: Modelling</h2>
+<pre class="r"><code>(
+  AT_reg &lt;- lm(total ~ Clear_prop + 
+                 Avg_traffic_volume, 
+               data = Accident_Traffic) %&gt;%
+    broom:: tidy() %&gt;% 
+    knitr::kable(format = &quot;markdown&quot;)
+)</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">term</th>
+<th align="right">estimate</th>
+<th align="right">std.error</th>
+<th align="right">statistic</th>
+<th align="right">p.value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">(Intercept)</td>
+<td align="right">4.5818783</td>
+<td align="right">1.0521290</td>
+<td align="right">4.354864</td>
+<td align="right">0.0001350</td>
+</tr>
+<tr class="even">
+<td align="left">Clear_prop</td>
+<td align="right">-2.2101559</td>
+<td align="right">0.7908199</td>
+<td align="right">-2.794765</td>
+<td align="right">0.0088312</td>
+</tr>
+<tr class="odd">
+<td align="left">Avg_traffic_volume</td>
+<td align="right">-0.0000121</td>
+<td align="right">0.0000159</td>
+<td align="right">-0.757351</td>
+<td align="right">0.4545581</td>
+</tr>
+</tbody>
+</table>
 <pre class="r"><code>MA_regression &lt;- MA_select %&gt;% 
   group_by(`County Name`) %&gt;% 
   mutate(Accident_Count = n()) %&gt;% 
