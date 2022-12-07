@@ -135,9 +135,10 @@ accident <- MA_select %>%
   arrange(`Report Year`, Month) 
 Clear <- ifelse(accident$`Weather Condition` == "Clear", 1, 0)
 accident2 <- cbind(accident, Clear) %>% 
-  mutate(prop = ...6/total) %>% 
+  mutate(Clear_days = sum(...6)) %>% 
   group_by(`Report Year`, Month) %>% 
-  mutate(Clear_prop = sum(prop)) %>% ungroup()
+  mutate(Clear_prop = Clear_days/total) %>%
+  ungroup()
 
 Accident_Traffic <- inner_join(Traffic_Volume2, accident2, by = "MY") %>%
   filter(`Weather Condition` == "Clear")
@@ -148,12 +149,19 @@ Accident_Traffic <- inner_join(Traffic_Volume2, accident2, by = "MY") %>%
 
 ```{r}
 (
+  AT_reg <- lm(total ~ Clear_days,
+               data = Accident_Traffic) %>%
+    broom:: tidy() %>% 
+    knitr::kable(format = "markdown")
+)
+(
   AT_reg <- lm(total ~ Clear_prop + 
                  Avg_traffic_volume, 
                data = Accident_Traffic) %>%
     broom:: tidy() %>% 
     knitr::kable(format = "markdown")
 )
+cor(accident2$total, accident2$Clear_days)
 ```
 
 

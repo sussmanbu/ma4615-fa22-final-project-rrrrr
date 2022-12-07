@@ -154,9 +154,10 @@ accident &lt;- MA_select %&gt;%
   arrange(`Report Year`, Month) 
 Clear &lt;- ifelse(accident$`Weather Condition` == &quot;Clear&quot;, 1, 0)
 accident2 &lt;- cbind(accident, Clear) %&gt;% 
-  mutate(prop = ...6/total) %&gt;% 
+  mutate(Clear_days = sum(...6)) %&gt;% 
   group_by(`Report Year`, Month) %&gt;% 
-  mutate(Clear_prop = sum(prop)) %&gt;% ungroup()</code></pre>
+  mutate(Clear_prop = Clear_days/total) %&gt;%
+  ungroup()</code></pre>
 <pre><code>## New names:
 ## • `` -&gt; `...6`</code></pre>
 <pre class="r"><code>Accident_Traffic &lt;- inner_join(Traffic_Volume2, accident2, by = &quot;MY&quot;) %&gt;%
@@ -164,6 +165,39 @@ accident2 &lt;- cbind(accident, Clear) %&gt;%
 </div>
 <div id="section-3-modelling" class="section level2">
 <h2>Section 3: Modelling</h2>
+<pre class="r"><code>(
+  AT_reg &lt;- lm(total ~ Clear_days,
+               data = Accident_Traffic) %&gt;%
+    broom:: tidy() %&gt;% 
+    knitr::kable(format = &quot;markdown&quot;)
+)</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">term</th>
+<th align="right">estimate</th>
+<th align="right">std.error</th>
+<th align="right">statistic</th>
+<th align="right">p.value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">(Intercept)</td>
+<td align="right">0.3789954</td>
+<td align="right">0.2271345</td>
+<td align="right">1.668594</td>
+<td align="right">0.1049549</td>
+</tr>
+<tr class="even">
+<td align="left">Clear_days</td>
+<td align="right">1.0913242</td>
+<td align="right">0.1219219</td>
+<td align="right">8.951013</td>
+<td align="right">0.0000000</td>
+</tr>
+</tbody>
+</table>
 <pre class="r"><code>(
   AT_reg &lt;- lm(total ~ Clear_prop + 
                  Avg_traffic_volume, 
@@ -205,6 +239,8 @@ accident2 &lt;- cbind(accident, Clear) %&gt;%
 </tr>
 </tbody>
 </table>
+<pre class="r"><code>cor(accident2$total, accident2$Clear_days)</code></pre>
+<pre><code>## [1] 0.8188886</code></pre>
 <pre class="r"><code>MA_regression &lt;- MA_select %&gt;% 
   group_by(`County Name`) %&gt;% 
   mutate(Accident_Count = n()) %&gt;% 
