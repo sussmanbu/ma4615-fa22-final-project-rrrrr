@@ -1,0 +1,22 @@
+```{r}
+library(tidyverse)
+
+MA_select <- read.csv(here::here("dataset", "MA_select.csv")) 
+
+Traffic_Volume2 <- Traffic_Volume %>% separate(MY, c("Year", "Month")) %>% mutate(MY = str_c(Year, Month, sep = "_"))
+accident <- MA_select %>% 
+  select(Report.Year, Month, Weather.Condition) %>% 
+  filter(Report.Year %in% c(2017, 2018, 2019, 2020, 2021, 2022)) %>% 
+  group_by(Report.Year, Month) %>%  
+  mutate(total = n()) %>% 
+  mutate(MY = str_c(Report.Year, Month, sep = "_")) %>% 
+  arrange(Report.Year, Month) 
+
+Accident_Traffic2 <- inner_join(Traffic_Volume2, accident, by = "MY") 
+
+Accident_Traffic2 %>% 
+  group_by(MY) %>% mutate(count = sum(total)) %>% ungroup() %>% 
+  ggplot(aes(x = MY, y = Avg_traffic_volume/10000)) +
+  geom_point() + geom_line() 
+
+```
