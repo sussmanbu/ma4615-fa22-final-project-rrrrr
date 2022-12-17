@@ -39,6 +39,7 @@ accident2 <- cbind(accident, Clear) %>%
   mutate(Clear_prop = Clear_days/total) %>%
   ungroup()
 
+# combine the two datasets
 Accident_Traffic <- inner_join(Traffic_Volume2, accident2, by = "MY") %>%
   filter(`Weather Condition` == "Clear")
 

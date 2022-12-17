@@ -1,12 +1,10 @@
 ---
 title: About
 lastmod: 2021-10-11T09:20:50-05:00
-featuredVideo:
-featuredImage:
+featuredVideo: 
+featuredImage: images/about_page.jpeg
 draft: false
 ---
-
-This comes from the file `content/about.md`.
 
 This is a website for the final project for MA[46]15 Data Science with R by Team RRRRR.
 The members of this team are below.

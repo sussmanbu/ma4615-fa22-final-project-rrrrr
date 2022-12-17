@@ -3,21 +3,45 @@ title: Analysis
 description:
 toc: true
 featuredVideo:
-featuredImage: https://upload.wikimedia.org/wikipedia/commons/7/77/Pebbleswithquarzite.jpg
+featuredImage: images/a-analysis_page.png
 draft: false
 ---
 ## Section 1: Motivation of Data Analysis (DA)
 
-Rail safety week is spearheaded by the national rail-safety education group Operation Lifesaver, which says that every three hours, a person or vehicle is hit by a train here in the U.S., and more than fifty percent of collisions happen at crossings equipped with lights or gates. Therefore, our group is interested in finding out which variables contribute to the accident counts. Since Massachusetts was home to the first railroad actually put into service in the United States, and the centuried transportation systems in Massachusetts may lead to many problems due to the not-so-well-designed road systems in the early days. Therefore, we further narrow our focus to the situation in Massachusetts. 
+Rail safety week is spearheaded by the national rail-safety education group Operation Lifesaver, which says that every three hours, a person or vehicle is hit by a train here in the U.S., and more than fifty percent of collisions happen at crossings equipped with lights or gates. Therefore, our group is interested in finding out which variables contribute to the accident counts. Since Massachusetts was home to the first railroad actually put into service in the United States, and the centuried transportation systems in Massachusetts may lead to many problems due to the not-so-well-designed road systems in the early days. Therefore, we further narrow our focus to the situation in Massachusetts.
+\
+&nbsp;
+\
+Considering the availability of the datasets we obtained and after exploring the datasets, we are interested in examining many possible variables that have an impact on the traffic.  \
+&nbsp;
+\
+**1）Is there any relationship between accident counts and visibility?** 
 
-Considering the availability of the datasets we obtained and after exploring the datasets, we are interested in examining many possible variables that have an impact on the traffic. Is there any relationship between accident counts and visibility? Is there any relationship between accidents counts and weather conditions? Specifically, under which kind of weather, there are the most accident counts? Does the roadway condition have an impact on the accidents counts? Does higher speed correspond with higher accident counts? To find out the answers to these questions, we plot histograms, and boxplots, and run regressions. By obtaining the leading causes of the high accident rate, we could reach some recommendations on the actions people can take to prevent them.
+In order to understand the cause of this problem, we will examine the relationship between [number of accidents] and [time of occurrence] in our dataset, with the sooner or later of the accident representing visibility. Visibility will be classified using [morning]/[noon]/[dusk]/[night]. Visibility will be in the order of Noon, morning, dust and night, depending on the strength of the sunlight.
+\
+&nbsp;
+\
+**2）Is there a relationship between the number of accidents and weather conditions? **
+
+To do this we will mainly call data for (weather conditions) and (number of accidents) from our dataset. Specifically, in what weather do the most accidents occur? Our weather data will contain the [clear]/[cloudy]/[Fog]/[Rain]/[Sleet]/[Snow]. These are the six most common types of weather in Massachusetts and are recorded in our dataset.
+\
+&nbsp;
+\
+**3）Does the roadway condition have an impact on the accidents counts? Does higher speed correspond with higher accident counts? **
+
+Our intuition is that high speed will lead to more crashes. We call both [train speed] and [vehicle speed] data from our dataset to build a linear model. However, through our model, we found that the actual result was different from what we expected. We will analyze this in detail in the next section.
+\
+&nbsp;
+\
+In order to have a clearer and more intuitive result, we will include the variable [time] in most of the analysis. To find out the answers to these questions, we plot histograms, and boxplots, and run regressions. By obtaining the leading causes of the high accident rate, we could reach some recommendations on the actions people can take to prevent them.
+
 
 ## Section 2: Deep-Dive Analysis
 
 Based on our initial questions, we looked at the number of accidents against factors such as weather conditions, temperature, visibility, roadway condition, speed and traffic volume in each county at Masachusettes. 
 
-## Section 2.1.1: Accident Counts, Weather Condition, and Temperature
-```{r}
+### Section 2.1.1: Accident Counts, Weather Condition, and Temperature
+```{r echo = FALSE, results = TRUE, message = FALSE, warning = FALSE, error = FALSE}
 suppressPackageStartupMessages(library(tidyverse)) 
 MA_select <- read_csv(here::here("dataset", "MA_select.csv"))
 
@@ -25,7 +49,9 @@ MA_select2 <- MA_select %>%
   filter(!is.na(`Weather Condition`) 
          & !is.na(Temperature) & 
            !is.na(Visibility), Temperature <= 104)
+```
 
+```{r}
 MA_select2 %>% 
   group_by(`Weather Condition`) %>% 
   mutate(Accident_Count = n()) %>% 
@@ -36,30 +62,28 @@ MA_select2 %>%
   labs(x = "Weather Condition")
 ```
 
-* We first hypothesized that the worse the weather conditions were, the more accidents it would have. However, by exploring the data, surprisingly, we found that it is actually the clear days have the highest count of accidents with the largest temperature range. We find this result goes against common sense. 
-* Now that we have a broad understanding of the relationship between accidents counts and weather conditions, the next question we wanted to answer was whether visibility might be a factor that affects the accident counts. 
 
-## Section 2.1.2: Accident Counts, Visibility, and Weather Conditions
+* We first hypothesized that the worse the weather conditions were, the more accidents it would have, since foggy days might lead to bad visual sight, rainy and snowy days might lead to slippery. However, by exploring the data and create the plot of the weather condition accident count. Surprisingly, we found that it is actually the clear days have the highest count of accidents with the largest temperature range. We find this result goes against common sense and our initial hypothesis, and the accident count in other bad weather condition seems to be relatively low and the temperature varied not so much. 
+* Now that we have a broad understanding of the relationship between accidents counts and weather conditions, and we have considered that there might be other factors that lead to higher accident rate in the clear days that cause this unusual phenomenon. The next question we wanted to answer was whether visibility might be a factor that affects the accident counts.
+
+### Section 2.1.2: Accident Counts, Visibility, and Weather Conditions
 ```{r}
 MA_select %>% group_by(`Weather Condition`) %>% 
   mutate(Accident_Count = n()) %>% 
-  ggplot(aes(x = `Weather Condition`, 
-             fill = Visibility)) + 
-  geom_bar() + 
-  labs(y = "Accident_Count")
+  ggplot(aes(x = `Weather Condition`, fill = Visibility)) + 
+  geom_bar() + labs(y = "Accident_Count")
 
 MA_select %>% group_by(`Weather Condition`) %>% 
   mutate(Accident_Count = n()) %>% 
-  ggplot(aes(x = `Weather Condition`, 
-             fill = Visibility)) + 
-  geom_bar(position = "fill") + 
-  labs(y = "Accident_Count")
+  ggplot(aes(x = `Weather Condition`, fill = Visibility)) + 
+  geom_bar(position = "fill") + labs(y = "Accident_Count")
 ```
 
-* We now looking at the relationship between the accident counts, weather condition, and visibility. From the proportion graph, we found that most accidents happened in dark days, and the second highest proportion of accidents is the ones happened at day. But, when looking at the absolute counts, the effect of weather conditions exceeds that of visibility since clear days still have significantly more accident counts than the other groups. 
-* We further related this results to additional factors such as roadway conditions in the next section. 
+* We now looking at the relationship between the accident counts, weather condition, and visibility. From the proportion graph, we found that most accidents happened in dark days, and the second highest proportion of accidents is the ones happened at day. These two visibility group indicated that when people have the better visual sight, the accidents happened more frequently. But, when looking at the absolute counts, the effect of weather conditions exceeds that of visibility since clear days still have significantly more accident counts than the other groups. We began to consider the possible reason that lead to high accident count during clear days.
+* We further related this results to additional factors such as roadway conditions in the next section.
 
-## Section 2.1.3: Accident Counts, Weather Conditions, and Roadway Conditions
+
+### Section 2.1.3: Accident Counts, Weather Conditions, and Roadway Conditions
 ```{r}
 MA_select %>% filter(!is.na(`Roadway Condition`)) %>% 
   group_by(`Roadway Condition`) %>% 
@@ -72,24 +96,25 @@ MA_select %>% filter(!is.na(`Roadway Condition`)) %>%
 
 
 * We explored the relationship between weather conditions, and roadway conditions by using facet_wrap to divide the data by weather conditions. We used Sno to represent Snowy days. From the results, we observed that over all weather and roadway conditions, dry roadways with clear days have the highest count of accidents. This result is quite surprising since the best conditions for driving(clear days and dry roadways) still have the highest count, and this also contradicts our initial conjecture. 
-
 * So, now we’ve concluded a conclusion, against our initial thoughts, that the accident counts are the highest in clear days and when the road is in the best condition. We suspected that the reasons might be related to the traffic flow.  In other words, the better the weather, the higher the visibility and the better the road conditions, the more people tend to drive, which leads to an increased likelihood of accidents. 
 * Therefore, for further exploration, we choose traffic volume to be our confounded variable, trying to figure out the major trend and if it verifies our deduction. In this way, we hope to reduce the impact of the differences in the number of exits in different situations and find clearer patterns. 
 
 ## Section 2.2: Adding Traffic Volume to Our Analysis
-```{r}
+```{r echo = FALSE, results = TRUE, message = FALSE, warning = FALSE, error = FALSE}
 library(tidyverse)
 Traffic_Volume <- read_csv(here::here("dataset", "Traffic_Volume.csv"))
 
 Traffic_Volume2 <- Traffic_Volume %>% separate(MY, c("Year", "Month")) %>% mutate(MY = str_c(Year, Month, sep = "_"))
+```
 
+```{r}
 Traffic_Volume2 %>% ggplot(aes(x = Month, y = Avg_traffic_volume)) + 
   geom_point() +
   facet_grid(~as.factor(Year)) +
   scale_x_discrete(guide = guide_axis(check.overlap = TRUE))
 ```
 
-```{r}
+```{r echo = FALSE, results = TRUE, message = FALSE, warning = FALSE, error = FALSE}
 library('tidyr')
 
 MA_select3 <- MA_select %>% 
@@ -98,7 +123,9 @@ MA_select3 <- MA_select %>%
 
 Combined <- inner_join(Traffic_Volume, MA_select3, by = "MY") %>% 
   select(MY, Avg_traffic_volume, `Weather Condition`)
+```
 
+```{r}
 Combined %>% 
   ggplot(aes(MY, Avg_traffic_volume, color = `Weather Condition`)) + 
   geom_point() + 
@@ -123,9 +150,10 @@ Combined %>%
   coord_flip()
 ```
 
-* After we plot the graphs, we don't see any patterns between traffic volume and accident counts. To prove our findings, we plan to run regression to come up with a conclusion. 
+* After we plot the graphs, it is not clear to see any pattern between traffic volume and accident counts. To get a more reliable result, we plan to run regression to come up with a prediction that can verify our conclusion.
 
-```{r}
+
+```{r echo = FALSE, results = TRUE, message = FALSE, warning = FALSE, error = FALSE}
 library(tidyverse)
 library(readr)
 accident <- MA_select %>% 
@@ -149,23 +177,35 @@ Accident_Traffic <- inner_join(Traffic_Volume2, accident2, by = "MY") %>%
 
 ## Section 3: Modelling
 
+We did modelling based on our created combined dataset **Accident_Traffic** and original dataset **MA_select** to find numerical evidence in supporting our final conclusion. The code for combined dataset can be found at the bottom of the data page.
+
+
 ```{r}
-(
-  AT_reg <- lm(total ~ Clear_days,
-               data = Accident_Traffic) %>%
+AT_reg1 <- lm(total ~ Clear_days,
+               data = Accident_Traffic)
+(AT_reg1 %>%
     broom:: tidy() %>% 
-    knitr::kable(format = "markdown")
-)
-(
-  AT_reg <- lm(total ~ Clear_prop + 
-                 Avg_traffic_volume, 
-               data = Accident_Traffic) %>%
+    knitr::kable(format = "markdown"))
+(summary(AT_reg1))
+```
+
+```{r}
+Avg_month_traffic_volume <- Accident_Traffic$Avg_traffic_volume * 30
+
+AT_reg2 <- lm(total ~ Clear_prop + 
+                Avg_month_traffic_volume, 
+              data = Accident_Traffic)
+(AT_reg2 %>%
     broom:: tidy() %>% 
-    knitr::kable(format = "markdown")
-)
+    knitr::kable(format = "markdown"))
+(summary(AT_reg2))
+```
+
+```{r}
 cor(accident2$total, accident2$Clear_days)
 ```
 
+* Insights
 
 
 ```{r}
@@ -174,14 +214,13 @@ MA_regression <- MA_select %>%
   mutate(Accident_Count = n()) %>% 
   select(`County Name`, Accident_Count, `Train Speed`, `Estimated Vehicle Speed`)
 
-(
-  MA_reg <- lm(Accident_Count ~ `Train Speed` + 
-                 `Estimated Vehicle Speed`, 
-               data = MA_regression) %>%
+MA_reg <- lm(Accident_Count ~ `Train Speed` + 
+               `Estimated Vehicle Speed`, 
+               data = MA_regression) 
+(MA_reg %>%
     broom:: tidy() %>% 
-    knitr::kable(format = "markdown")
-)
-
+    knitr::kable(format = "markdown"))
+(summary(MA_reg))
 ```
 
 * We want to explore the relationship between accident number and the speed of crushed cars and trains. So, the response variable we chose is the accident number of each county, and the predictor variables are `Train Speed` and `Estimated Vehicle Speed`. 

@@ -46,8 +46,13 @@ In addition to exploratory data analysis of the original dataset, we wanted to s
 \
 &nbsp;
 \
-This supplementary data was collected by the Highway Division of the Massachusetts Department of Transportation in order to analyze and predict the traffic flow, which provides instruction on things like extending some roads. And we manually picked the data from the website, calculated the average traffic volume by month, and summarized it in the MA traffic volume dataset. Since the earlier years do not have much meaning in representing the near future situation, we only use the traffic volume data ranging from 2017 to 2022. To offset the potential limitations brought by the limited data points in both our datasets, we combined the `Year` column and `Month` column to a new variable `MY` to represent the average traffic count of each month from 2017 to 2022. Then we join the two datasets as one, call it Accident_Traffic. 
+This supplementary data was collected by the Highway Division of the Massachusetts Department of Transportation in order to analyze and predict the traffic flow, which provides instruction on things like extending some roads. And we manually picked the data from the website, calculated the average traffic volume by month, and summarized it in the MA traffic volume dataset. Since the earlier years do not have much meaning in representing the near future situation, we only use the traffic volume data ranging from 2017 to 2022. 
 The TrafficVolume dataset can be found [here](https://docs.google.com/spreadsheets/d/1mIT5NyYcTCREjJJ238Hj4ZIP0e5PvEb5-W9vbEptRgs/edit#gid=0)
+\
+&nbsp;
+\
+To offset the potential limitations brought by the limited data points in both our datasets, we combined the `Year` column and `Month` column to a new variable `MY` to represent the average traffic count of each month from 2017 to 2022. Then we join the two datasets as one, call it Accident_Traffic. 
+The Accident_Traffic dataset can be found [here](https://docs.google.com/spreadsheets/d/10HQq-IWulEcxQ75ht62zQJIfHvRD5xAhMN0p1Pftc1U/edit#gid=689379693)
 \
 &nbsp;
 \
@@ -65,7 +70,8 @@ The following are the variables in the MA traffic volume dataset:
 
 We only use one additional R packages when cleaning our dataset.
 
-* stringr: making it easy to work with strings – we use it to fix the typo problem 
+* **stringr**: making it easy to work with strings – we use it to fix the typo problem 
+* **shiny**: we create an interactive (shinyapp) in R studio for our audience to explore our analysis on their own, which can be found in our big picture page.
 
 ## Section 4: Code for Cleaning the Datasets
 
@@ -90,31 +96,32 @@ library('stringr')
 MA_select$`County Name` <- str_replace_all(MA_select$`County Name`, "WORCHESTER", "WORCESTER")
 
 write_csv(MA_select, file = here::here("dataset", "MA_select.csv"))
-
 save(MA_select, file = here::here("dataset/MA_select.RData"))
 
-# read the combined dataset
-TrafficVolume <- read_csv(here::here("dataset", "Traffic Volume.csv"), show_col_types = FALSE)
-save(TrafficVolume, file = here::here("dataset/MA_select.RData"))
+# read and save the external dataset
+Traffic_Volume <- read_csv(here::here("dataset", "Traffic_Volume.csv"))
+save(Traffic_Volume, file = here::here("dataset/Traffic_Volume.RData"))
+
+# save final traffic volume data
+Traffic_Volume2 <- Traffic_Volume %>% separate(MY, c("Year", "Month")) %>% mutate(MY = str_c(Year, Month, sep = "_"))
+accident <- MA_select %>% 
+  select(`Report Year`, Month, `Weather Condition`) %>% 
+  filter(`Report Year` %in% c(2017, 2018, 2019, 2020, 2021, 2022)) %>% 
+  group_by(`Report Year`, Month) %>%  
+  mutate(total = n()) %>% 
+  mutate(MY = str_c(`Report Year`, Month, sep = "_")) %>% 
+  arrange(`Report Year`, Month) 
+Clear <- ifelse(accident$`Weather Condition` == "Clear", 1, 0)
+accident2 <- cbind(accident, Clear) %>% 
+  mutate(Clear_days = sum(...6)) %>% 
+  group_by(`Report Year`, Month) %>% 
+  mutate(Clear_prop = Clear_days/total) %>%
+  ungroup()
+
+# combine the two datasets
+Accident_Traffic <- inner_join(Traffic_Volume2, accident2, by = "MY") %>%
+  filter(`Weather Condition` == "Clear")
+
+write_csv(Accident_Traffic, file = here::here("dataset", "Accident_Traffic.csv"))
+save(Accident_Traffic, file = here::here("dataset/Accident_Traffic.RData"))
 ```
-
-----
-
-[Delete before the final version ]
-
-## Rubric: On this page
-
-you will
-
-* Describe where/how to find data.
-  * You must include a link to the original data source(s). Make sure to provide attribution to those who collected the data.
-  * Why was the data collected/curated? Who put it together? (This is important, if you don't know why it was collected then that might not be a good dataset to look at.
-* Describe the different data files used and what each variable means. 
-  * If you have many variables then only describe the most relevant ones and summarize the rest.
-* Describe any cleaning you had to do for your data.
-  * You *must* include a link to your `load_and_clean_data.R` file.
-  * Also, describe any additional R packages you used outside of those covered in class.
-  * Describe and show code for how you combined multiple data files and any cleaning that was necessary for that.
-  * Some repetition of what you do in your `load_and_clean_data.R` file is fine and encouraged if it helps explain what you did.
-* Organization, clarity, cleanliness of the page
-  * Make sure to remove excessive warnings, use clean easy-to-read code (without side scrolling), organize with sections, use bullets and other organization tools, etc.

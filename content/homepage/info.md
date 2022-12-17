@@ -1,8 +1,8 @@
 ---
-title: MA 415 Final Project
+title: MA 415 Group RRRRR Final Project
 draft: false
-role: Team NAME
-bio: This is my data science project. Check out the links at the top. You can update this in `content/homepage/info.md`. You can change the image above by changing `content/homepage/feature_image.md`.
+role: RRRRR
+bio: Though not mentioned frequently in our daily live, Crossway Rail Road accidents count as having high accident rate and a big challenge to ensure people’s safety. In order to help people realize these accidents’ danger and what factors that might lead to the increase of the accidents.Therefore, our group decide to research on the leading factors of the Crossway Rail Road accident focus on Masschusetts in this project. Please check out our data and analysis page to learn more about our project.
 organization:
   name: Boston University
   url: https://www.bu.edu/

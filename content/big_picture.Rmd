@@ -2,8 +2,8 @@
 title: Big Picture
 description:
 toc: true
-featuredImage: /images/The_Big_Picture_2.jpeg
-featuredVideo:
+featuredImage: images/bigpicture_page.png
+featuredVideo: images/rrrrrinteractive.mp4
 draft: false
 ---
 
@@ -12,7 +12,7 @@ Our objective is to working on the United States Crossway Rail road accidents ra
 \
 &nbsp;
 \
-Thesis: 
+**Thesis:** 
 
 Working with the huge dataset that contains the every dated details of each accident, we are able to deal with the factors we want and summarize their total counts. Based on the timely gap, we have the skill to consider technology innovation, construction renovation and other reasons that why these events occurred. The other datasets that we can access to in the government’s database could bring us more extensive insight for our analysis and we are able to combine them with our original research to provide people with specific advice on safer traveling. 
 
@@ -43,15 +43,10 @@ MA_select2 %>%
   labs(x = "Weather Condition")
 ```
 
-
-\
-&nbsp;
-\
 There is a significantly large proportion of accidents happening either during the day or during the dark. With navigation itself already being difficult at night, insufficient lighting also leads to distractions for drivers, which then increases their reaction times. In addition to visibility, roads at night will also have more tired and drunk drivers pose the risk of poor or unpredictable driving behavior, which further increases the frequency of accidents. However, since daytime has the largest proportion of accident counts in most weather conditions, we are also very interested in the reasons that lead to the outcomes.
 \
 &nbsp;
 \
-
 ```{r echo = FALSE, results = TRUE, message = FALSE, warning = FALSE, error = FALSE}
 MA_select %>% group_by(`Weather Condition`) %>% 
   mutate(Accident_Count = n()) %>% 
@@ -61,15 +56,10 @@ MA_select %>% group_by(`Weather Condition`) %>%
   labs(y = "Accident_Count")
 ```
 
-
-\
-&nbsp;
-\
 With the traffic volume significantly higher during the day, it is plausible to assume more potential accident counts during the day with any weather conditions and roadway conditions. This may be because people feel the weather and road conditions are perfect, so they lowered their preparedness. In turn, negligent drivers pose the risk of poor or unpredictable driving behavior, which further increases the frequency of collisions. 
 \
 &nbsp;
 \
-
 ```{r echo = FALSE, results = TRUE, message = FALSE, warning = FALSE, error = FALSE}
 MA_select %>% group_by(`Weather Condition`) %>% 
   mutate(Accident_Count = n()) %>% 
@@ -79,19 +69,16 @@ MA_select %>% group_by(`Weather Condition`) %>%
   labs(y = "Accident_Count")
 ```
 
-\
-&nbsp;
-\
 Our recommendations to combat the difficulties of daytime driving are to enhance noticeable and important road signs to attract drivers’ attention and thus remind them of careful driving. This also helps drivers have an easier time seeing and reacting to any potential hazards. 
 \
 &nbsp;
 \
 **Traffic volum was not the key factor in the accident**
+
 Further, we hope to have a more detailed study of the cause of the accident. We plan to add the factor of traffic flow to analyze the causes of accidents. With good visibility, clear weather and good road conditions, the number of accidents is higher instead. It's very counter-intuitive. We believe this may be because people tend to travel in conditions suitable for driving, which leads to the increase of traffic flow in these circumstances, more likely to occur in more collision accidents.
 \
 &nbsp;
 \
-
 ```{r echo = FALSE, results = TRUE, message = FALSE, warning = FALSE, error = FALSE}
 Traffic_Volume <- read_csv(here::here("dataset", "Traffic_Volume.csv"))
 Traffic_Volume2 <- Traffic_Volume %>% separate(MY, c("Year", "Month")) %>% mutate(MY = str_c(Year, Month, sep = "_"))
@@ -101,8 +88,6 @@ Traffic_Volume2 %>% ggplot(aes(x = Month, y = Avg_traffic_volume)) +
   facet_grid(~as.factor(Year)) +
   scale_x_discrete(guide = guide_axis(check.overlap = TRUE))
 ```
-
-
 \
 &nbsp;
 \
@@ -127,8 +112,6 @@ Combined %>%
   geom_line(aes(group = `Weather Condition`)) + 
   coord_flip()
 ```
-
-
 \
 &nbsp;
 \
@@ -137,8 +120,11 @@ Our model does support our view, that is, the increase in traffic volume does no
 &nbsp;
 \
 **Low Speed is the More Deadly accident Cause**
-Besides the potential distraction or carelessness of drivers, which are both hard to control since it is inevitable for humans, our analysis also shows that speeding at HIGHWAY-RAIL CROSSING can be a factor in how deadly the accidents are. At highway-rail crossings, low speeding or stopping can be vital threats to accidents and even death since trains are not like cars that can immediately cut the speed or stop. 
 
+Besides the potential distraction or carelessness of drivers, which are both hard to control since it is inevitable for humans, our analysis also shows that speeding at HIGHWAY-RAIL CROSSING can be a factor in how deadly the accidents are. At highway-rail crossings, low speeding or stopping can be vital threats to accidents and even death since trains are not like cars that can immediately cut the speed or stop. 
+\
+&nbsp;
+\
 Our recommendation to address this issue is to add more noticeable signs and warnings at the crossing. Since many railroads have been built for a really long time, we may also recommend government or related departments improve lighting or voice prompts at the crossing to notice both trains and cars.
 
 ## Interactive
@@ -146,6 +132,6 @@ We use R Shiny to create an interactive app. This app will allow you to choose t
 \
 &nbsp;
 \
-Feel free to explore [here](https://rrrrrinteractive.shinyapps.io/shiny_rrrrr/).
+We created a video about our Shiny app, featured at top of this page. Feel free to explore the interactive [here](https://rrrrrinteractive.shinyapps.io/shiny_rrrrr/).
 
----
+

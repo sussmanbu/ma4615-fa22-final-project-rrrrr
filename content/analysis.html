@@ -3,7 +3,7 @@ title: Analysis
 description:
 toc: true
 featuredVideo:
-featuredImage: https://upload.wikimedia.org/wikipedia/commons/7/77/Pebbleswithquarzite.jpg
+featuredImage: images/a-analysis_page.png
 draft: false
 ---
 
@@ -14,33 +14,27 @@ draft: false
 
 <div id="section-1-motivation-of-data-analysis-da" class="section level2">
 <h2>Section 1: Motivation of Data Analysis (DA)</h2>
-<p>Rail safety week is spearheaded by the national rail-safety education group Operation Lifesaver, which says that every three hours, a person or vehicle is hit by a train here in the U.S., and more than fifty percent of collisions happen at crossings equipped with lights or gates. Therefore, our group is interested in finding out which variables contribute to the accident counts. Since Massachusetts was home to the first railroad actually put into service in the United States, and the centuried transportation systems in Massachusetts may lead to many problems due to the not-so-well-designed road systems in the early days. Therefore, we further narrow our focus to the situation in Massachusetts.</p>
-<p>Considering the availability of the datasets we obtained and after exploring the datasets, we are interested in examining many possible variables that have an impact on the traffic. Is there any relationship between accident counts and visibility? Is there any relationship between accidents counts and weather conditions? Specifically, under which kind of weather, there are the most accident counts? Does the roadway condition have an impact on the accidents counts? Does higher speed correspond with higher accident counts? To find out the answers to these questions, we plot histograms, and boxplots, and run regressions. By obtaining the leading causes of the high accident rate, we could reach some recommendations on the actions people can take to prevent them.</p>
+<p>Rail safety week is spearheaded by the national rail-safety education group Operation Lifesaver, which says that every three hours, a person or vehicle is hit by a train here in the U.S., and more than fifty percent of collisions happen at crossings equipped with lights or gates. Therefore, our group is interested in finding out which variables contribute to the accident counts. Since Massachusetts was home to the first railroad actually put into service in the United States, and the centuried transportation systems in Massachusetts may lead to many problems due to the not-so-well-designed road systems in the early days. Therefore, we further narrow our focus to the situation in Massachusetts.<br />
+ <br />
+Considering the availability of the datasets we obtained and after exploring the datasets, we are interested in examining many possible variables that have an impact on the traffic.<br />
+ <br />
+<strong>1）Is there any relationship between accident counts and visibility?</strong></p>
+<p>In order to understand the cause of this problem, we will examine the relationship between [number of accidents] and [time of occurrence] in our dataset, with the sooner or later of the accident representing visibility. Visibility will be classified using [morning]/[noon]/[dusk]/[night]. Visibility will be in the order of Noon, morning, dust and night, depending on the strength of the sunlight.<br />
+ <br />
+<strong>2）Is there a relationship between the number of accidents and weather conditions? </strong></p>
+<p>To do this we will mainly call data for (weather conditions) and (number of accidents) from our dataset. Specifically, in what weather do the most accidents occur? Our weather data will contain the [clear]/[cloudy]/[Fog]/[Rain]/[Sleet]/[Snow]. These are the six most common types of weather in Massachusetts and are recorded in our dataset.<br />
+ <br />
+<strong>3）Does the roadway condition have an impact on the accidents counts? Does higher speed correspond with higher accident counts? </strong></p>
+<p>Our intuition is that high speed will lead to more crashes. We call both [train speed] and [vehicle speed] data from our dataset to build a linear model. However, through our model, we found that the actual result was different from what we expected. We will analyze this in detail in the next section.<br />
+ <br />
+In order to have a clearer and more intuitive result, we will include the variable [time] in most of the analysis. To find out the answers to these questions, we plot histograms, and boxplots, and run regressions. By obtaining the leading causes of the high accident rate, we could reach some recommendations on the actions people can take to prevent them.</p>
 </div>
 <div id="section-2-deep-dive-analysis" class="section level2">
 <h2>Section 2: Deep-Dive Analysis</h2>
 <p>Based on our initial questions, we looked at the number of accidents against factors such as weather conditions, temperature, visibility, roadway condition, speed and traffic volume in each county at Masachusettes.</p>
-</div>
-<div id="section-2.1.1-accident-counts-weather-condition-and-temperature" class="section level2">
-<h2>Section 2.1.1: Accident Counts, Weather Condition, and Temperature</h2>
-<pre class="r"><code>suppressPackageStartupMessages(library(tidyverse)) 
-MA_select &lt;- read_csv(here::here(&quot;dataset&quot;, &quot;MA_select.csv&quot;))</code></pre>
-<pre><code>## Rows: 1017 Columns: 62
-## ── Column specification ────────────────────────────────────────────────────────
-## Delimiter: &quot;,&quot;
-## chr  (40): Date, Month, Day, Hour, Minute, AM/PM, Nearest Station, Subdivisi...
-## dbl  (15): Report Year, Estimated Vehicle Speed, Temperature, Number of Loco...
-## lgl   (6): Crossing Warning Expanded 6, Crossing Warning Expanded 7, Crossin...
-## time  (1): Time
-## 
-## ℹ Use `spec()` to retrieve the full column specification for this data.
-## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
-<pre class="r"><code>MA_select2 &lt;- MA_select %&gt;% 
-  filter(!is.na(`Weather Condition`) 
-         &amp; !is.na(Temperature) &amp; 
-           !is.na(Visibility), Temperature &lt;= 104)
-
-MA_select2 %&gt;% 
+<div id="section-2.1.1-accident-counts-weather-condition-and-temperature" class="section level3">
+<h3>Section 2.1.1: Accident Counts, Weather Condition, and Temperature</h3>
+<pre class="r"><code>MA_select2 %&gt;% 
   group_by(`Weather Condition`) %&gt;% 
   mutate(Accident_Count = n()) %&gt;% 
   ggplot(aes(
@@ -48,35 +42,31 @@ MA_select2 %&gt;%
     y = Temperature, fill = Accident_Count)) + 
   geom_boxplot() + 
   labs(x = &quot;Weather Condition&quot;)</code></pre>
-<p><img src="/analysis_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
+<p><img src="/analysis_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
 <ul>
-<li>We first hypothesized that the worse the weather conditions were, the more accidents it would have. However, by exploring the data, surprisingly, we found that it is actually the clear days have the highest count of accidents with the largest temperature range. We find this result goes against common sense.</li>
-<li>Now that we have a broad understanding of the relationship between accidents counts and weather conditions, the next question we wanted to answer was whether visibility might be a factor that affects the accident counts.</li>
+<li>We first hypothesized that the worse the weather conditions were, the more accidents it would have, since foggy days might lead to bad visual sight, rainy and snowy days might lead to slippery. However, by exploring the data and create the plot of the weather condition accident count. Surprisingly, we found that it is actually the clear days have the highest count of accidents with the largest temperature range. We find this result goes against common sense and our initial hypothesis, and the accident count in other bad weather condition seems to be relatively low and the temperature varied not so much.</li>
+<li>Now that we have a broad understanding of the relationship between accidents counts and weather conditions, and we have considered that there might be other factors that lead to higher accident rate in the clear days that cause this unusual phenomenon. The next question we wanted to answer was whether visibility might be a factor that affects the accident counts.</li>
 </ul>
 </div>
-<div id="section-2.1.2-accident-counts-visibility-and-weather-conditions" class="section level2">
-<h2>Section 2.1.2: Accident Counts, Visibility, and Weather Conditions</h2>
+<div id="section-2.1.2-accident-counts-visibility-and-weather-conditions" class="section level3">
+<h3>Section 2.1.2: Accident Counts, Visibility, and Weather Conditions</h3>
 <pre class="r"><code>MA_select %&gt;% group_by(`Weather Condition`) %&gt;% 
   mutate(Accident_Count = n()) %&gt;% 
-  ggplot(aes(x = `Weather Condition`, 
-             fill = Visibility)) + 
-  geom_bar() + 
-  labs(y = &quot;Accident_Count&quot;)</code></pre>
-<p><img src="/analysis_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+  ggplot(aes(x = `Weather Condition`, fill = Visibility)) + 
+  geom_bar() + labs(y = &quot;Accident_Count&quot;)</code></pre>
+<p><img src="/analysis_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
 <pre class="r"><code>MA_select %&gt;% group_by(`Weather Condition`) %&gt;% 
   mutate(Accident_Count = n()) %&gt;% 
-  ggplot(aes(x = `Weather Condition`, 
-             fill = Visibility)) + 
-  geom_bar(position = &quot;fill&quot;) + 
-  labs(y = &quot;Accident_Count&quot;)</code></pre>
-<p><img src="/analysis_files/figure-html/unnamed-chunk-2-2.png" width="672" /></p>
+  ggplot(aes(x = `Weather Condition`, fill = Visibility)) + 
+  geom_bar(position = &quot;fill&quot;) + labs(y = &quot;Accident_Count&quot;)</code></pre>
+<p><img src="/analysis_files/figure-html/unnamed-chunk-3-2.png" width="672" /></p>
 <ul>
-<li>We now looking at the relationship between the accident counts, weather condition, and visibility. From the proportion graph, we found that most accidents happened in dark days, and the second highest proportion of accidents is the ones happened at day. But, when looking at the absolute counts, the effect of weather conditions exceeds that of visibility since clear days still have significantly more accident counts than the other groups.</li>
+<li>We now looking at the relationship between the accident counts, weather condition, and visibility. From the proportion graph, we found that most accidents happened in dark days, and the second highest proportion of accidents is the ones happened at day. These two visibility group indicated that when people have the better visual sight, the accidents happened more frequently. But, when looking at the absolute counts, the effect of weather conditions exceeds that of visibility since clear days still have significantly more accident counts than the other groups. We began to consider the possible reason that lead to high accident count during clear days.</li>
 <li>We further related this results to additional factors such as roadway conditions in the next section.</li>
 </ul>
 </div>
-<div id="section-2.1.3-accident-counts-weather-conditions-and-roadway-conditions" class="section level2">
-<h2>Section 2.1.3: Accident Counts, Weather Conditions, and Roadway Conditions</h2>
+<div id="section-2.1.3-accident-counts-weather-conditions-and-roadway-conditions" class="section level3">
+<h3>Section 2.1.3: Accident Counts, Weather Conditions, and Roadway Conditions</h3>
 <pre class="r"><code>MA_select %&gt;% filter(!is.na(`Roadway Condition`)) %&gt;% 
   group_by(`Roadway Condition`) %&gt;% 
   mutate(Accident_Count = n()) %&gt;% 
@@ -84,54 +74,34 @@ MA_select2 %&gt;%
   geom_bar() + 
   facet_grid(~as.factor(`Weather Condition`)) +
   scale_x_discrete(guide = guide_axis(check.overlap = TRUE))</code></pre>
-<p><img src="/analysis_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p><img src="/analysis_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
 <ul>
-<li><p>We explored the relationship between weather conditions, and roadway conditions by using facet_wrap to divide the data by weather conditions. We used Sno to represent Snowy days. From the results, we observed that over all weather and roadway conditions, dry roadways with clear days have the highest count of accidents. This result is quite surprising since the best conditions for driving(clear days and dry roadways) still have the highest count, and this also contradicts our initial conjecture.</p></li>
-<li><p>So, now we’ve concluded a conclusion, against our initial thoughts, that the accident counts are the highest in clear days and when the road is in the best condition. We suspected that the reasons might be related to the traffic flow. In other words, the better the weather, the higher the visibility and the better the road conditions, the more people tend to drive, which leads to an increased likelihood of accidents.</p></li>
-<li><p>Therefore, for further exploration, we choose traffic volume to be our confounded variable, trying to figure out the major trend and if it verifies our deduction. In this way, we hope to reduce the impact of the differences in the number of exits in different situations and find clearer patterns.</p></li>
+<li>We explored the relationship between weather conditions, and roadway conditions by using facet_wrap to divide the data by weather conditions. We used Sno to represent Snowy days. From the results, we observed that over all weather and roadway conditions, dry roadways with clear days have the highest count of accidents. This result is quite surprising since the best conditions for driving(clear days and dry roadways) still have the highest count, and this also contradicts our initial conjecture.</li>
+<li>So, now we’ve concluded a conclusion, against our initial thoughts, that the accident counts are the highest in clear days and when the road is in the best condition. We suspected that the reasons might be related to the traffic flow. In other words, the better the weather, the higher the visibility and the better the road conditions, the more people tend to drive, which leads to an increased likelihood of accidents.</li>
+<li>Therefore, for further exploration, we choose traffic volume to be our confounded variable, trying to figure out the major trend and if it verifies our deduction. In this way, we hope to reduce the impact of the differences in the number of exits in different situations and find clearer patterns.</li>
 </ul>
+</div>
 </div>
 <div id="section-2.2-adding-traffic-volume-to-our-analysis" class="section level2">
 <h2>Section 2.2: Adding Traffic Volume to Our Analysis</h2>
-<pre class="r"><code>library(tidyverse)
-Traffic_Volume &lt;- read_csv(here::here(&quot;dataset&quot;, &quot;Traffic_Volume.csv&quot;))</code></pre>
-<pre><code>## Rows: 61 Columns: 2
-## ── Column specification ────────────────────────────────────────────────────────
-## Delimiter: &quot;,&quot;
-## chr (1): MY
-## dbl (1): Avg_traffic_volume
-## 
-## ℹ Use `spec()` to retrieve the full column specification for this data.
-## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
-<pre class="r"><code>Traffic_Volume2 &lt;- Traffic_Volume %&gt;% separate(MY, c(&quot;Year&quot;, &quot;Month&quot;)) %&gt;% mutate(MY = str_c(Year, Month, sep = &quot;_&quot;))
-
-Traffic_Volume2 %&gt;% ggplot(aes(x = Month, y = Avg_traffic_volume)) + 
+<pre class="r"><code>Traffic_Volume2 %&gt;% ggplot(aes(x = Month, y = Avg_traffic_volume)) + 
   geom_point() +
   facet_grid(~as.factor(Year)) +
   scale_x_discrete(guide = guide_axis(check.overlap = TRUE))</code></pre>
-<p><img src="/analysis_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
-<pre class="r"><code>library(&#39;tidyr&#39;)
-
-MA_select3 &lt;- MA_select %&gt;% 
-  filter(`Report Year` %in% c(2017, 2018, 2019, 2020, 2021, 2022)) %&gt;% 
-  unite(&#39;MY&#39;, `Report Year`, Month, remove = FALSE)
-
-Combined &lt;- inner_join(Traffic_Volume, MA_select3, by = &quot;MY&quot;) %&gt;% 
-  select(MY, Avg_traffic_volume, `Weather Condition`)
-
-Combined %&gt;% 
+<p><img src="/analysis_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<pre class="r"><code>Combined %&gt;% 
   ggplot(aes(MY, Avg_traffic_volume, color = `Weather Condition`)) + 
   geom_point() + 
   geom_line(aes(group = `Weather Condition`)) + 
   coord_flip()</code></pre>
-<p><img src="/analysis_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p><img src="/analysis_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
 <pre class="r"><code>Combined %&gt;% 
   filter(`Weather Condition` == &quot;Clear&quot;) %&gt;% 
   ggplot(aes(MY, Avg_traffic_volume)) + 
   geom_point() +  
   geom_line(aes(group = 1)) +
   coord_flip()</code></pre>
-<p><img src="/analysis_files/figure-html/unnamed-chunk-5-2.png" width="672" /></p>
+<p><img src="/analysis_files/figure-html/unnamed-chunk-8-2.png" width="672" /></p>
 <pre class="r"><code>Combined %&gt;% 
   filter(`Weather Condition` == &quot;Clear&quot;) %&gt;% 
   group_by(MY) %&gt;% 
@@ -141,38 +111,19 @@ Combined %&gt;%
   geom_point() + 
   geom_line(aes(group = 1)) + 
   coord_flip()</code></pre>
-<p><img src="/analysis_files/figure-html/unnamed-chunk-5-3.png" width="672" /></p>
+<p><img src="/analysis_files/figure-html/unnamed-chunk-8-3.png" width="672" /></p>
 <ul>
-<li>After we plot the graphs, we don’t see any patterns between traffic volume and accident counts. To prove our findings, we plan to run regression to come up with a conclusion.</li>
+<li>After we plot the graphs, it is not clear to see any pattern between traffic volume and accident counts. To get a more reliable result, we plan to run regression to come up with a prediction that can verify our conclusion.</li>
 </ul>
-<pre class="r"><code>library(tidyverse)
-library(readr)
-accident &lt;- MA_select %&gt;% 
-  select(`Report Year`, Month, `Weather Condition`) %&gt;% 
-  filter(`Report Year` %in% c(2017, 2018, 2019, 2020, 2021, 2022)) %&gt;% 
-  group_by(`Report Year`, Month) %&gt;%  
-  mutate(total = n()) %&gt;% 
-  mutate(MY = str_c(`Report Year`, Month, sep = &quot;_&quot;)) %&gt;% 
-  arrange(`Report Year`, Month) 
-Clear &lt;- ifelse(accident$`Weather Condition` == &quot;Clear&quot;, 1, 0)
-accident2 &lt;- cbind(accident, Clear) %&gt;% 
-  mutate(Clear_days = sum(...6)) %&gt;% 
-  group_by(`Report Year`, Month) %&gt;% 
-  mutate(Clear_prop = Clear_days/total) %&gt;%
-  ungroup()</code></pre>
-<pre><code>## New names:
-## • `` -&gt; `...6`</code></pre>
-<pre class="r"><code>Accident_Traffic &lt;- inner_join(Traffic_Volume2, accident2, by = &quot;MY&quot;) %&gt;%
-  filter(`Weather Condition` == &quot;Clear&quot;)</code></pre>
 </div>
 <div id="section-3-modelling" class="section level2">
 <h2>Section 3: Modelling</h2>
-<pre class="r"><code>(
-  AT_reg &lt;- lm(total ~ Clear_days,
-               data = Accident_Traffic) %&gt;%
+<p>We did modelling based on our created combined dataset <strong>Accident_Traffic</strong> and original dataset <strong>MA_select</strong> to find numerical evidence in supporting our final conclusion. The code for combined dataset can be found at the bottom of the data page.</p>
+<pre class="r"><code>AT_reg1 &lt;- lm(total ~ Clear_days,
+               data = Accident_Traffic)
+(AT_reg1 %&gt;%
     broom:: tidy() %&gt;% 
-    knitr::kable(format = &quot;markdown&quot;)
-)</code></pre>
+    knitr::kable(format = &quot;markdown&quot;))</code></pre>
 <table>
 <thead>
 <tr class="header">
@@ -200,13 +151,33 @@ accident2 &lt;- cbind(accident, Clear) %&gt;%
 </tr>
 </tbody>
 </table>
-<pre class="r"><code>(
-  AT_reg &lt;- lm(total ~ Clear_prop + 
-                 Avg_traffic_volume, 
-               data = Accident_Traffic) %&gt;%
+<pre class="r"><code>(summary(AT_reg1))</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = total ~ Clear_days, data = Accident_Traffic)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -0.6530 -0.4703 -0.4703  0.4384  1.5297 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)   0.3790     0.2271   1.669    0.105    
+## Clear_days    1.0913     0.1219   8.951 3.17e-10 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.6189 on 32 degrees of freedom
+## Multiple R-squared:  0.7146, Adjusted R-squared:  0.7057 
+## F-statistic: 80.12 on 1 and 32 DF,  p-value: 3.173e-10</code></pre>
+<pre class="r"><code>Avg_month_traffic_volume &lt;- Accident_Traffic$Avg_traffic_volume * 30
+
+AT_reg2 &lt;- lm(total ~ Clear_prop + 
+                Avg_month_traffic_volume, 
+              data = Accident_Traffic)
+(AT_reg2 %&gt;%
     broom:: tidy() %&gt;% 
-    knitr::kable(format = &quot;markdown&quot;)
-)</code></pre>
+    knitr::kable(format = &quot;markdown&quot;))</code></pre>
 <table>
 <thead>
 <tr class="header">
@@ -233,28 +204,50 @@ accident2 &lt;- cbind(accident, Clear) %&gt;%
 <td align="right">0.0088312</td>
 </tr>
 <tr class="odd">
-<td align="left">Avg_traffic_volume</td>
-<td align="right">-0.0000121</td>
-<td align="right">0.0000159</td>
+<td align="left">Avg_month_traffic_volume</td>
+<td align="right">-0.0000004</td>
+<td align="right">0.0000005</td>
 <td align="right">-0.757351</td>
 <td align="right">0.4545581</td>
 </tr>
 </tbody>
 </table>
+<pre class="r"><code>(summary(AT_reg2))</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = total ~ Clear_prop + Avg_month_traffic_volume, data = Accident_Traffic)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -1.0384 -0.7237 -0.6279  0.9456  1.8526 
+## 
+## Coefficients:
+##                            Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)               4.582e+00  1.052e+00   4.355 0.000135 ***
+## Clear_prop               -2.210e+00  7.908e-01  -2.795 0.008831 ** 
+## Avg_month_traffic_volume -4.022e-07  5.311e-07  -0.757 0.454558    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 1.044 on 31 degrees of freedom
+## Multiple R-squared:  0.2129, Adjusted R-squared:  0.1621 
+## F-statistic: 4.191 on 2 and 31 DF,  p-value: 0.02448</code></pre>
 <pre class="r"><code>cor(accident2$total, accident2$Clear_days)</code></pre>
 <pre><code>## [1] 0.8188886</code></pre>
+<ul>
+<li>Insights</li>
+</ul>
 <pre class="r"><code>MA_regression &lt;- MA_select %&gt;% 
   group_by(`County Name`) %&gt;% 
   mutate(Accident_Count = n()) %&gt;% 
   select(`County Name`, Accident_Count, `Train Speed`, `Estimated Vehicle Speed`)
 
-(
-  MA_reg &lt;- lm(Accident_Count ~ `Train Speed` + 
-                 `Estimated Vehicle Speed`, 
-               data = MA_regression) %&gt;%
+MA_reg &lt;- lm(Accident_Count ~ `Train Speed` + 
+               `Estimated Vehicle Speed`, 
+               data = MA_regression) 
+(MA_reg %&gt;%
     broom:: tidy() %&gt;% 
-    knitr::kable(format = &quot;markdown&quot;)
-)</code></pre>
+    knitr::kable(format = &quot;markdown&quot;))</code></pre>
 <table>
 <colgroup>
 <col width="38%" />
@@ -296,6 +289,28 @@ accident2 &lt;- cbind(accident, Clear) %&gt;%
 </tr>
 </tbody>
 </table>
+<pre class="r"><code>(summary(MA_reg))</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = Accident_Count ~ `Train Speed` + `Estimated Vehicle Speed`, 
+##     data = MA_regression)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -175.29  -99.48  -57.27  165.19  215.81 
+## 
+## Coefficients:
+##                           Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)               200.2115     9.2430  21.661   &lt;2e-16 ***
+## `Train Speed`              -0.4923     0.2779  -1.771   0.0769 .  
+## `Estimated Vehicle Speed`  -1.1189     0.3907  -2.864   0.0043 ** 
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 131 on 777 degrees of freedom
+##   (237 observations deleted due to missingness)
+## Multiple R-squared:  0.01252,    Adjusted R-squared:  0.009976 
+## F-statistic: 4.925 on 2 and 777 DF,  p-value: 0.007493</code></pre>
 <ul>
 <li>We want to explore the relationship between accident number and the speed of crushed cars and trains. So, the response variable we chose is the accident number of each county, and the predictor variables are <code>Train Speed</code> and <code>Estimated Vehicle Speed</code>.</li>
 <li>We fit the data by multiple linear regression model and we don’t need to make any transformations of the predictors. As the coefficients for independent variables are negative, slower speed of trains and vehicles might lead to higher number of accident counts. We suspect that most of the accidents happened when vehicles are static, but had blind spot of sight.</li>
