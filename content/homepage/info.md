@@ -2,7 +2,7 @@
 title: MA 415 Group RRRRR Final Project
 draft: false
 role: RRRRR
-bio: Though not mentioned frequently in our daily live, Crossway Rail Road accidents count as having high accident rate and a big challenge to ensure people’s safety. In order to help people realize these accidents’ danger and what factors that might lead to the increase of the accidents.Therefore, our group decide to research on the leading factors of the Crossway Rail Road accident focus on Masschusetts in this project. Please check out our data and analysis page to learn more about our project.
+bio: Though not mentioned frequently in our daily live, Crossway Rail Road accidents count as having high accident rate and a big challenge to ensure people’s safety. In order to help people realize these accidents’ danger and what factors that might lead to the increase of the accidents. Therefore, our group decide to research on the leading factors of the Crossway Rail Road accident focus on Massachusetts in this project. Please check out our data and analysis page to learn more about our project.
 organization:
   name: Boston University
   url: https://www.bu.edu/
