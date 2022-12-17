@@ -65,12 +65,13 @@ MA_select %>% filter(!is.na(`Roadway Condition`)) %>%
   group_by(`Roadway Condition`) %>% 
   mutate(Accident_Count = n()) %>% 
   ggplot(aes(x = `Roadway Condition`)) + 
-  geom_bar() +
-  facet_grid(~as.factor(`Weather Condition`)) 
+  geom_bar() + 
+  facet_grid(~as.factor(`Weather Condition`)) +
+  scale_x_discrete(guide = guide_axis(check.overlap = TRUE))
 ```
 
 
-* We explored the relationship between weather conditions, and roadway conditions by using facet_wrap to divide the data by weather conditions. From the results, we observed that over all weather and roadway conditions, dry roadways with clear days have the highest count of accidents. This result is quite surprising since the best conditions for driving(clear days and dry roadways) still have the highest count, and this also contradicts our initial conjecture. 
+* We explored the relationship between weather conditions, and roadway conditions by using facet_wrap to divide the data by weather conditions. We used Sno to represent Snowy days. From the results, we observed that over all weather and roadway conditions, dry roadways with clear days have the highest count of accidents. This result is quite surprising since the best conditions for driving(clear days and dry roadways) still have the highest count, and this also contradicts our initial conjecture. 
 
 * So, now we’ve concluded a conclusion, against our initial thoughts, that the accident counts are the highest in clear days and when the road is in the best condition. We suspected that the reasons might be related to the traffic flow.  In other words, the better the weather, the higher the visibility and the better the road conditions, the more people tend to drive, which leads to an increased likelihood of accidents. 
 * Therefore, for further exploration, we choose traffic volume to be our confounded variable, trying to figure out the major trend and if it verifies our deduction. In this way, we hope to reduce the impact of the differences in the number of exits in different situations and find clearer patterns. 
@@ -84,7 +85,8 @@ Traffic_Volume2 <- Traffic_Volume %>% separate(MY, c("Year", "Month")) %>% mutat
 
 Traffic_Volume2 %>% ggplot(aes(x = Month, y = Avg_traffic_volume)) + 
   geom_point() +
-  facet_grid(~as.factor(Year)) 
+  facet_grid(~as.factor(Year)) +
+  scale_x_discrete(guide = guide_axis(check.overlap = TRUE))
 ```
 
 ```{r}
@@ -106,7 +108,7 @@ Combined %>%
 Combined %>% 
   filter(`Weather Condition` == "Clear") %>% 
   ggplot(aes(MY, Avg_traffic_volume)) + 
-  geom_point() + 
+  geom_point() +  
   geom_line(aes(group = 1)) +
   coord_flip()
 
@@ -115,7 +117,7 @@ Combined %>%
   group_by(MY) %>% 
   mutate(count = n()) %>% 
   ungroup() %>% 
-  ggplot(aes(MY, count)) + 
+  ggplot(aes(MY, count)) +  
   geom_point() + 
   geom_line(aes(group = 1)) + 
   coord_flip()

@@ -23,7 +23,25 @@ From our analysis, it is easy to see that accidents occur at a significantly hig
 &nbsp;
 \
 
-![](/Users/lisaz/Desktop/MA415/final project/ma4615-fa22-final-project-rrrrr/static/images/one.png)
+
+```{r echo = FALSE, results = TRUE, message = FALSE, warning = FALSE, error = FALSE}
+library(tidyverse)
+MA_select <- read_csv(here::here("dataset", "MA_select.csv"))
+MA_select2 <- MA_select %>% 
+  filter(!is.na(`Weather Condition`) 
+         & !is.na(Temperature) & 
+           !is.na(Visibility), Temperature <= 104)
+ 
+MA_select2 %>% 
+  group_by(`Weather Condition`) %>% 
+  mutate(Accident_Count = n()) %>% 
+  ggplot(aes(
+    x = reorder(`Weather Condition`, Temperature, decreasing=FALSE), 
+    y = Temperature, fill = Accident_Count)) + 
+  geom_boxplot() + 
+  labs(x = "Weather Condition")
+```
+
 
 \
 &nbsp;
@@ -33,7 +51,15 @@ There is a significantly large proportion of accidents happening either during t
 &nbsp;
 \
 
-![](/Users/lisaz/Desktop/MA415/final project/ma4615-fa22-final-project-rrrrr/static/images/two.png)
+```{r echo = FALSE, results = TRUE, message = FALSE, warning = FALSE, error = FALSE}
+MA_select %>% group_by(`Weather Condition`) %>% 
+  mutate(Accident_Count = n()) %>% 
+  ggplot(aes(x = `Weather Condition`, 
+             fill = Visibility)) + 
+  geom_bar(position = "fill") + 
+  labs(y = "Accident_Count")
+```
+
 
 \
 &nbsp;
@@ -43,7 +69,14 @@ With the traffic volume significantly higher during the day, it is plausible to 
 &nbsp;
 \
 
-![](/Users/lisaz/Desktop/MA415/final project/ma4615-fa22-final-project-rrrrr/static/images/three.png)
+```{r echo = FALSE, results = TRUE, message = FALSE, warning = FALSE, error = FALSE}
+MA_select %>% group_by(`Weather Condition`) %>% 
+  mutate(Accident_Count = n()) %>% 
+  ggplot(aes(x = `Weather Condition`, 
+             fill = Visibility)) + 
+  geom_bar() + 
+  labs(y = "Accident_Count")
+```
 
 \
 &nbsp;
@@ -58,7 +91,16 @@ Further, we hope to have a more detailed study of the cause of the accident. We 
 &nbsp;
 \
 
-![](/Users/lisaz/Desktop/MA415/final project/ma4615-fa22-final-project-rrrrr/static/images/four.png)
+```{r echo = FALSE, results = TRUE, message = FALSE, warning = FALSE, error = FALSE}
+Traffic_Volume <- read_csv(here::here("dataset", "Traffic_Volume.csv"))
+Traffic_Volume2 <- Traffic_Volume %>% separate(MY, c("Year", "Month")) %>% mutate(MY = str_c(Year, Month, sep = "_"))
+
+Traffic_Volume2 %>% ggplot(aes(x = Month, y = Avg_traffic_volume)) + 
+  geom_point() +
+  facet_grid(~as.factor(Year)) +
+  scale_x_discrete(guide = guide_axis(check.overlap = TRUE))
+```
+
 
 \
 &nbsp;
@@ -67,8 +109,24 @@ We looked at average monthly vehicle traffic in the state of Massachusetts from 
 \
 &nbsp;
 \
+```{r echo = FALSE, results = TRUE, message = FALSE, warning = FALSE, error = FALSE}
+library('tidyr') 
+Traffic_Volume <- read_csv(here::here("dataset", "Traffic_Volume.csv"))
 
-![](/Users/lisaz/Desktop/MA415/final project/ma4615-fa22-final-project-rrrrr/static/images/five.png)
+MA_select3 <- MA_select %>% 
+  filter(`Report Year` %in% c(2017, 2018, 2019, 2020, 2021, 2022)) %>% 
+  unite('MY', `Report Year`, Month, remove = FALSE)
+
+Combined <- inner_join(Traffic_Volume, MA_select3, by = "MY") %>% 
+  select(MY, Avg_traffic_volume, `Weather Condition`)
+
+Combined %>% 
+  ggplot(aes(MY, Avg_traffic_volume, color = `Weather Condition`)) + 
+  geom_point() + 
+  geom_line(aes(group = `Weather Condition`)) + 
+  coord_flip()
+```
+
 
 \
 &nbsp;
