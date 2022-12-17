@@ -43,6 +43,9 @@ In order to have a clearer and more intuitive result, we will include the variab
   geom_boxplot() + 
   labs(x = &quot;Weather Condition&quot;)</code></pre>
 <p><img src="/analysis_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<p><br />
+ <br />
+</p>
 <ul>
 <li>We first hypothesized that the worse the weather conditions were, the more accidents it would have, since foggy days might lead to bad visual sight, rainy and snowy days might lead to slippery. However, by exploring the data and create the plot of the weather condition accident count. Surprisingly, we found that it is actually the clear days have the highest count of accidents with the largest temperature range. We find this result goes against common sense and our initial hypothesis, and the accident count in other bad weather condition seems to be relatively low and the temperature varied not so much.</li>
 <li>Now that we have a broad understanding of the relationship between accidents counts and weather conditions, and we have considered that there might be other factors that lead to higher accident rate in the clear days that cause this unusual phenomenon. The next question we wanted to answer was whether visibility might be a factor that affects the accident counts.</li>
@@ -60,6 +63,9 @@ In order to have a clearer and more intuitive result, we will include the variab
   ggplot(aes(x = `Weather Condition`, fill = Visibility)) + 
   geom_bar(position = &quot;fill&quot;) + labs(y = &quot;Accident_Count&quot;)</code></pre>
 <p><img src="/analysis_files/figure-html/unnamed-chunk-3-2.png" width="672" /></p>
+<p><br />
+ <br />
+</p>
 <ul>
 <li>We now looking at the relationship between the accident counts, weather condition, and visibility. From the proportion graph, we found that most accidents happened in dark days, and the second highest proportion of accidents is the ones happened at day. These two visibility group indicated that when people have the better visual sight, the accidents happened more frequently. But, when looking at the absolute counts, the effect of weather conditions exceeds that of visibility since clear days still have significantly more accident counts than the other groups. We began to consider the possible reason that lead to high accident count during clear days.</li>
 <li>We further related this results to additional factors such as roadway conditions in the next section.</li>
@@ -75,6 +81,9 @@ In order to have a clearer and more intuitive result, we will include the variab
   facet_grid(~as.factor(`Weather Condition`)) +
   scale_x_discrete(guide = guide_axis(check.overlap = TRUE))</code></pre>
 <p><img src="/analysis_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p><br />
+ <br />
+</p>
 <ul>
 <li>We explored the relationship between weather conditions, and roadway conditions by using facet_wrap to divide the data by weather conditions. We used Sno to represent Snowy days. From the results, we observed that over all weather and roadway conditions, dry roadways with clear days have the highest count of accidents. This result is quite surprising since the best conditions for driving(clear days and dry roadways) still have the highest count, and this also contradicts our initial conjecture.</li>
 <li>So, now we’ve concluded a conclusion, against our initial thoughts, that the accident counts are the highest in clear days and when the road is in the best condition. We suspected that the reasons might be related to the traffic flow. In other words, the better the weather, the higher the visibility and the better the road conditions, the more people tend to drive, which leads to an increased likelihood of accidents.</li>
@@ -112,13 +121,104 @@ In order to have a clearer and more intuitive result, we will include the variab
   geom_line(aes(group = 1)) + 
   coord_flip()</code></pre>
 <p><img src="/analysis_files/figure-html/unnamed-chunk-8-3.png" width="672" /></p>
+<p><br />
+ <br />
+</p>
 <ul>
 <li>After we plot the graphs, it is not clear to see any pattern between traffic volume and accident counts. To get a more reliable result, we plan to run regression to come up with a prediction that can verify our conclusion.</li>
 </ul>
 </div>
 <div id="section-3-modelling" class="section level2">
 <h2>Section 3: Modelling</h2>
-<p>We did modelling based on our created combined dataset <strong>Accident_Traffic</strong> and original dataset <strong>MA_select</strong> to find numerical evidence in supporting our final conclusion. The code for combined dataset can be found at the bottom of the data page.</p>
+<p>We did modelling based on our original dataset <strong>MA_select</strong> and the created combined dataset <strong>Accident_Traffic</strong> to find numerical evidence in supporting our final conclusion. The code for combined dataset can be found at the bottom of the data page.</p>
+<div id="first-we-regress-accident_count-by-train-speed-and-estimated-vehicle-speed." class="section level3">
+<h3>First, we regress Accident_Count by Train Speed and Estimated Vehicle Speed.</h3>
+<pre class="r"><code>MA_regression &lt;- MA_select %&gt;% 
+  group_by(`County Name`) %&gt;% 
+  mutate(Accident_Count = n()) %&gt;% 
+  select(`County Name`, Accident_Count, `Train Speed`, `Estimated Vehicle Speed`)
+
+MA_reg &lt;- lm(Accident_Count ~ `Train Speed` + 
+               `Estimated Vehicle Speed`, 
+               data = MA_regression) 
+(MA_reg %&gt;%
+    broom:: tidy() %&gt;% 
+    knitr::kable(format = &quot;markdown&quot;))</code></pre>
+<table>
+<colgroup>
+<col width="38%" />
+<col width="17%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">term</th>
+<th align="right">estimate</th>
+<th align="right">std.error</th>
+<th align="right">statistic</th>
+<th align="right">p.value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">(Intercept)</td>
+<td align="right">200.2114668</td>
+<td align="right">9.2430431</td>
+<td align="right">21.660774</td>
+<td align="right">0.0000000</td>
+</tr>
+<tr class="even">
+<td align="left"><code>Train Speed</code></td>
+<td align="right">-0.4923244</td>
+<td align="right">0.2779198</td>
+<td align="right">-1.771462</td>
+<td align="right">0.0768758</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>Estimated Vehicle Speed</code></td>
+<td align="right">-1.1189452</td>
+<td align="right">0.3906888</td>
+<td align="right">-2.864032</td>
+<td align="right">0.0042956</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>(summary(MA_reg))</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = Accident_Count ~ `Train Speed` + `Estimated Vehicle Speed`, 
+##     data = MA_regression)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -175.29  -99.48  -57.27  165.19  215.81 
+## 
+## Coefficients:
+##                           Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)               200.2115     9.2430  21.661   &lt;2e-16 ***
+## `Train Speed`              -0.4923     0.2779  -1.771   0.0769 .  
+## `Estimated Vehicle Speed`  -1.1189     0.3907  -2.864   0.0043 ** 
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 131 on 777 degrees of freedom
+##   (237 observations deleted due to missingness)
+## Multiple R-squared:  0.01252,    Adjusted R-squared:  0.009976 
+## F-statistic: 4.925 on 2 and 777 DF,  p-value: 0.007493</code></pre>
+<p><br />
+ <br />
+</p>
+<ul>
+<li>We want to explore the relationship between accident number and the speed of crushed cars and trains. So, the response variable we chose is the accident number of each county, and the predictor variables are <code>Train Speed</code> and <code>Estimated Vehicle Speed</code>.</li>
+<li>We fit the data by multiple linear regression model and we don’t need to make any transformations of the predictors. As the coefficients for independent variables are negative, slower speed of trains and vehicles might lead to higher number of accident counts. We suspect that most of the accidents happened when vehicles are static, but had blind spot of sight.</li>
+<li>Noticeably, at the 90% confidence level we chose, p-values are less than 0.1, thus, the estimates are statistically significant.</li>
+<li>By running the regression, we found that the correlation (R-squared) between accident counts and train speed and estimates vehicle speed is positive but extremely small, which means there is almost no correlation between accidents counts and speed. Thus, we came up with another possible variable that may affect the accident counts, that is, the proportion of clear days.</li>
+</ul>
+</div>
+<div id="next-we-look-into-the-accident-counts-to-find-the-most-correlated-variable." class="section level3">
+<h3>Next, we look into the accident counts to find the most correlated variable.</h3>
 <pre class="r"><code>AT_reg1 &lt;- lm(total ~ Clear_days,
                data = Accident_Traffic)
 (AT_reg1 %&gt;%
@@ -234,88 +334,13 @@ AT_reg2 &lt;- lm(total ~ Clear_prop +
 ## F-statistic: 4.191 on 2 and 31 DF,  p-value: 0.02448</code></pre>
 <pre class="r"><code>cor(accident2$total, accident2$Clear_days)</code></pre>
 <pre><code>## [1] 0.8188886</code></pre>
+<p><br />
+ <br />
+</p>
 <ul>
 <li>Insights</li>
 </ul>
-<pre class="r"><code>MA_regression &lt;- MA_select %&gt;% 
-  group_by(`County Name`) %&gt;% 
-  mutate(Accident_Count = n()) %&gt;% 
-  select(`County Name`, Accident_Count, `Train Speed`, `Estimated Vehicle Speed`)
-
-MA_reg &lt;- lm(Accident_Count ~ `Train Speed` + 
-               `Estimated Vehicle Speed`, 
-               data = MA_regression) 
-(MA_reg %&gt;%
-    broom:: tidy() %&gt;% 
-    knitr::kable(format = &quot;markdown&quot;))</code></pre>
-<table>
-<colgroup>
-<col width="38%" />
-<col width="17%" />
-<col width="14%" />
-<col width="14%" />
-<col width="14%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="left">term</th>
-<th align="right">estimate</th>
-<th align="right">std.error</th>
-<th align="right">statistic</th>
-<th align="right">p.value</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">(Intercept)</td>
-<td align="right">200.2114668</td>
-<td align="right">9.2430431</td>
-<td align="right">21.660774</td>
-<td align="right">0.0000000</td>
-</tr>
-<tr class="even">
-<td align="left"><code>Train Speed</code></td>
-<td align="right">-0.4923244</td>
-<td align="right">0.2779198</td>
-<td align="right">-1.771462</td>
-<td align="right">0.0768758</td>
-</tr>
-<tr class="odd">
-<td align="left"><code>Estimated Vehicle Speed</code></td>
-<td align="right">-1.1189452</td>
-<td align="right">0.3906888</td>
-<td align="right">-2.864032</td>
-<td align="right">0.0042956</td>
-</tr>
-</tbody>
-</table>
-<pre class="r"><code>(summary(MA_reg))</code></pre>
-<pre><code>## 
-## Call:
-## lm(formula = Accident_Count ~ `Train Speed` + `Estimated Vehicle Speed`, 
-##     data = MA_regression)
-## 
-## Residuals:
-##     Min      1Q  Median      3Q     Max 
-## -175.29  -99.48  -57.27  165.19  215.81 
-## 
-## Coefficients:
-##                           Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)               200.2115     9.2430  21.661   &lt;2e-16 ***
-## `Train Speed`              -0.4923     0.2779  -1.771   0.0769 .  
-## `Estimated Vehicle Speed`  -1.1189     0.3907  -2.864   0.0043 ** 
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-## 
-## Residual standard error: 131 on 777 degrees of freedom
-##   (237 observations deleted due to missingness)
-## Multiple R-squared:  0.01252,    Adjusted R-squared:  0.009976 
-## F-statistic: 4.925 on 2 and 777 DF,  p-value: 0.007493</code></pre>
-<ul>
-<li>We want to explore the relationship between accident number and the speed of crushed cars and trains. So, the response variable we chose is the accident number of each county, and the predictor variables are <code>Train Speed</code> and <code>Estimated Vehicle Speed</code>.</li>
-<li>We fit the data by multiple linear regression model and we don’t need to make any transformations of the predictors. As the coefficients for independent variables are negative, slower speed of trains and vehicles might lead to higher number of accident counts. We suspect that most of the accidents happened when vehicles are static, but had blind spot of sight.</li>
-<li>Noticeably, at the 90% confidence level we chose, p-values are less than 0.1, thus, the estimates are statistically significant.</li>
-</ul>
+</div>
 </div>
 <div id="section-4-flaws-and-limitations" class="section level2">
 <h2>Section 4: Flaws and Limitations</h2>

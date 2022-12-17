@@ -62,6 +62,9 @@ MA_select2 %>%
   labs(x = "Weather Condition")
 ```
 
+\
+&nbsp;
+\
 
 * We first hypothesized that the worse the weather conditions were, the more accidents it would have, since foggy days might lead to bad visual sight, rainy and snowy days might lead to slippery. However, by exploring the data and create the plot of the weather condition accident count. Surprisingly, we found that it is actually the clear days have the highest count of accidents with the largest temperature range. We find this result goes against common sense and our initial hypothesis, and the accident count in other bad weather condition seems to be relatively low and the temperature varied not so much. 
 * Now that we have a broad understanding of the relationship between accidents counts and weather conditions, and we have considered that there might be other factors that lead to higher accident rate in the clear days that cause this unusual phenomenon. The next question we wanted to answer was whether visibility might be a factor that affects the accident counts.
@@ -79,6 +82,10 @@ MA_select %>% group_by(`Weather Condition`) %>%
   geom_bar(position = "fill") + labs(y = "Accident_Count")
 ```
 
+\
+&nbsp;
+\
+
 * We now looking at the relationship between the accident counts, weather condition, and visibility. From the proportion graph, we found that most accidents happened in dark days, and the second highest proportion of accidents is the ones happened at day. These two visibility group indicated that when people have the better visual sight, the accidents happened more frequently. But, when looking at the absolute counts, the effect of weather conditions exceeds that of visibility since clear days still have significantly more accident counts than the other groups. We began to consider the possible reason that lead to high accident count during clear days.
 * We further related this results to additional factors such as roadway conditions in the next section.
 
@@ -94,6 +101,9 @@ MA_select %>% filter(!is.na(`Roadway Condition`)) %>%
   scale_x_discrete(guide = guide_axis(check.overlap = TRUE))
 ```
 
+\
+&nbsp;
+\
 
 * We explored the relationship between weather conditions, and roadway conditions by using facet_wrap to divide the data by weather conditions. We used Sno to represent Snowy days. From the results, we observed that over all weather and roadway conditions, dry roadways with clear days have the highest count of accidents. This result is quite surprising since the best conditions for driving(clear days and dry roadways) still have the highest count, and this also contradicts our initial conjecture. 
 * So, now we’ve concluded a conclusion, against our initial thoughts, that the accident counts are the highest in clear days and when the road is in the best condition. We suspected that the reasons might be related to the traffic flow.  In other words, the better the weather, the higher the visibility and the better the road conditions, the more people tend to drive, which leads to an increased likelihood of accidents. 
@@ -150,6 +160,10 @@ Combined %>%
   coord_flip()
 ```
 
+\
+&nbsp;
+\
+
 * After we plot the graphs, it is not clear to see any pattern between traffic volume and accident counts. To get a more reliable result, we plan to run regression to come up with a prediction that can verify our conclusion.
 
 
@@ -177,9 +191,33 @@ Accident_Traffic <- inner_join(Traffic_Volume2, accident2, by = "MY") %>%
 
 ## Section 3: Modelling
 
-We did modelling based on our created combined dataset **Accident_Traffic** and original dataset **MA_select** to find numerical evidence in supporting our final conclusion. The code for combined dataset can be found at the bottom of the data page.
+We did modelling based on our original dataset **MA_select** and the created combined dataset **Accident_Traffic** to find numerical evidence in supporting our final conclusion. The code for combined dataset can be found at the bottom of the data page.
 
+### First, we regress Accident_Count by Train Speed and Estimated Vehicle Speed.
+```{r}
+MA_regression <- MA_select %>% 
+  group_by(`County Name`) %>% 
+  mutate(Accident_Count = n()) %>% 
+  select(`County Name`, Accident_Count, `Train Speed`, `Estimated Vehicle Speed`)
 
+MA_reg <- lm(Accident_Count ~ `Train Speed` + 
+               `Estimated Vehicle Speed`, 
+               data = MA_regression) 
+(MA_reg %>%
+    broom:: tidy() %>% 
+    knitr::kable(format = "markdown"))
+(summary(MA_reg))
+```
+\
+&nbsp;
+\
+
+* We want to explore the relationship between accident number and the speed of crushed cars and trains. So, the response variable we chose is the accident number of each county, and the predictor variables are `Train Speed` and `Estimated Vehicle Speed`. 
+* We fit the data by multiple linear regression model and we don’t need to make any transformations of the predictors. As the coefficients for independent variables are negative, slower speed of trains and vehicles might lead to higher number of accident counts. We suspect that most of the accidents happened when vehicles are static, but had blind spot of sight. 
+* Noticeably, at the 90% confidence level we chose, p-values are less than 0.1, thus, the estimates are statistically significant.
+* By running the regression, we found that the correlation (R-squared) between accident counts and train speed and estimates vehicle speed is positive but extremely small, which means there is almost no correlation between accidents counts and speed. Thus, we came up with another possible variable that may affect the accident counts, that is, the proportion of clear days.
+
+### Next, we look into the accident counts to find the most correlated variable.
 ```{r}
 AT_reg1 <- lm(total ~ Clear_days,
                data = Accident_Traffic)
@@ -205,27 +243,11 @@ AT_reg2 <- lm(total ~ Clear_prop +
 cor(accident2$total, accident2$Clear_days)
 ```
 
+\
+&nbsp;
+\
+
 * Insights
-
-
-```{r}
-MA_regression <- MA_select %>% 
-  group_by(`County Name`) %>% 
-  mutate(Accident_Count = n()) %>% 
-  select(`County Name`, Accident_Count, `Train Speed`, `Estimated Vehicle Speed`)
-
-MA_reg <- lm(Accident_Count ~ `Train Speed` + 
-               `Estimated Vehicle Speed`, 
-               data = MA_regression) 
-(MA_reg %>%
-    broom:: tidy() %>% 
-    knitr::kable(format = "markdown"))
-(summary(MA_reg))
-```
-
-* We want to explore the relationship between accident number and the speed of crushed cars and trains. So, the response variable we chose is the accident number of each county, and the predictor variables are `Train Speed` and `Estimated Vehicle Speed`. 
-* We fit the data by multiple linear regression model and we don’t need to make any transformations of the predictors. As the coefficients for independent variables are negative, slower speed of trains and vehicles might lead to higher number of accident counts. We suspect that most of the accidents happened when vehicles are static, but had blind spot of sight. 
-* Noticeably, at the 90% confidence level we chose, p-values are less than 0.1, thus, the estimates are statistically significant.
 
 
 ## Section 4: Flaws and Limitations
