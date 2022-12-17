@@ -105,7 +105,7 @@ MA_select %>% filter(!is.na(`Roadway Condition`)) %>%
 &nbsp;
 \
 
-* We explored the relationship between weather conditions, and roadway conditions by using facet_wrap to divide the data by weather conditions. We used Sno to represent Snowy days. From the results, we observed that over all weather and roadway conditions, dry roadways with clear days have the highest count of accidents. This result is quite surprising since the best conditions for driving(clear days and dry roadways) still have the highest count, and this also contradicts our initial conjecture. 
+* We explored the relationship between weather conditions, and roadway conditions by using facet_wrap to divide the data by weather conditions. And for simplified visualization, the missing category in `Roadway Condition` represents [Snow/slush] in the original dataset. From the results, we observed that over all weather and roadway conditions, dry roadways with clear days have the highest count of accidents. This result is quite surprising since the best conditions for driving(clear days and dry roadways) still have the highest count, and this also contradicts our initial conjecture. 
 * So, now we’ve concluded a conclusion, against our initial thoughts, that the accident counts are the highest in clear days and when the road is in the best condition. We suspected that the reasons might be related to the traffic flow.  In other words, the better the weather, the higher the visibility and the better the road conditions, the more people tend to drive, which leads to an increased likelihood of accidents. 
 * Therefore, for further exploration, we choose traffic volume to be our confounded variable, trying to figure out the major trend and if it verifies our deduction. In this way, we hope to reduce the impact of the differences in the number of exits in different situations and find clearer patterns. 
 
@@ -215,7 +215,7 @@ MA_reg <- lm(Accident_Count ~ `Train Speed` +
 * We want to explore the relationship between accident number and the speed of crushed cars and trains. So, the response variable we chose is the accident number of each county, and the predictor variables are `Train Speed` and `Estimated Vehicle Speed`. 
 * We fit the data by multiple linear regression model and we don’t need to make any transformations of the predictors. As the coefficients for independent variables are negative, slower speed of trains and vehicles might lead to higher number of accident counts. We suspect that most of the accidents happened when vehicles are static, but had blind spot of sight. 
 * Noticeably, at the 90% confidence level we chose, p-values are less than 0.1, thus, the estimates are statistically significant.
-* By running the regression, we found that the correlation (R-squared) between accident counts and train speed and estimates vehicle speed is positive but extremely small, which means there is almost no correlation between accidents counts and speed. Thus, we came up with another possible variable that may affect the accident counts, that is, the proportion of clear days.
+* By running the regression, we found that the correlation (R-squared to be 0.009976) between accident counts and train speed and estimates vehicle speed is positive but extremely small, which means there is almost no correlation between accidents counts and speed. Thus, we came up with another possible variable that may affect the accident counts, that is, the proportion of clear days.
 
 ### Next, we look into the accident counts to find the most correlated variable.
 ```{r}
@@ -226,12 +226,19 @@ AT_reg1 <- lm(total ~ Clear_days,
     knitr::kable(format = "markdown"))
 (summary(AT_reg1))
 ```
+\
+&nbsp;
+\
 
+* Since we a significantly greater number of accidents happened in clear days, we then assume that the number of clear days can also be a variable that affects the number of accident counts within a month. By running the regression, we found that the correlation(R^2) is 0.7057, which is a high level of correlation. Thus, the results show that the number of clear days is a strong predictor for the accident counts.
+\
+&nbsp;
+\
 ```{r}
-Avg_month_traffic_volume <- Accident_Traffic$Avg_traffic_volume * 30
+Monthly_traffic_volume <- Accident_Traffic$Avg_traffic_volume * 30
 
 AT_reg2 <- lm(total ~ Clear_prop + 
-                Avg_month_traffic_volume, 
+                Monthly_traffic_volume, 
               data = Accident_Traffic)
 (AT_reg2 %>%
     broom:: tidy() %>% 
@@ -247,7 +254,7 @@ cor(accident2$total, accident2$Clear_days)
 &nbsp;
 \
 
-* Insights
+* From the previous analysis, we saw significantly more accidents in clear days than other weathers. We thus assume this is due to there might be higher traffic volume within clear days. To find out the correlation, we ran a regression with the number of accidents within a month(Y) and the proportion of clear days for all accidents in that month(X1) and the total traffic volume in that month(X2). The result shows that the correlation(R^2) is 0.1621, which is a very low level of correlation. Thus, the results show that even though we have seen a high level of correlation between the number of clear days and the accident counts, the combination of clear days proportion and monthly traffic volume may not be a good predictor of the accident counts.
 
 
 ## Section 4: Flaws and Limitations
