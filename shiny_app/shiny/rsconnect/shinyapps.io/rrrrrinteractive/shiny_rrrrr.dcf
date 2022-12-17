@@ -5,10 +5,10 @@ account: rrrrrinteractive
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 7841632
-bundleId: 6629038
+bundleId: 6648928
 url: https://rrrrrinteractive.shinyapps.io/shiny_rrrrr/
-when: 1670882206.92948
-lastSyncTime: 1670882206.9295
+when: 1671305423.07167
+lastSyncTime: 1671305423.07168
 asMultiple: FALSE
 asStatic: FALSE
 ignoredFiles: loan_refusal_clean.csv|loan_refusal.csv|loan_refusal.RData
