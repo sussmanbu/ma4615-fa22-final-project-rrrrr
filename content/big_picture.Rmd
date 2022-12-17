@@ -18,6 +18,7 @@ Working with the huge dataset that contains the every dated details of each acci
 
 ## Actionable insights/recommendations
 **Weather condition is the #1 Reason for Traffic Collisions**
+
 From our analysis, it is easy to see that accidents occur at a significantly higher rate on warm, clear days, especially during the day. We attribute this finding to the traffic volume in each weather condition during the day. 
 \
 &nbsp;
@@ -141,5 +142,10 @@ Besides the potential distraction or carelessness of drivers, which are both har
 Our recommendation to address this issue is to add more noticeable signs and warnings at the crossing. Since many railroads have been built for a really long time, we may also recommend government or related departments improve lighting or voice prompts at the crossing to notice both trains and cars.
 
 ## Interactive
-a
+We use R Shiny to create an interactive app. This app will allow you to choose the time period and specific county to see the highway railway traffic counts. This app is great for visualize and compare the traffic counts among counties you select. 
+\
+&nbsp;
+\
+Feel free to explore [here](https://rrrrrinteractive.shinyapps.io/shiny_rrrrr/).
+
 ---
