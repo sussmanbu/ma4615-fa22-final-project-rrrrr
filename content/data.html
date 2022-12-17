@@ -3,7 +3,7 @@ title: Data
 description:
 toc: true
 featuredVideo:
-featuredImage: images/data-import-cheatsheet-thumbs.png
+featuredImage: images/data_page.png
 draft: false
 ---
 
@@ -15,8 +15,9 @@ draft: false
 <div id="section-1-original-dataset" class="section level2">
 <h2>Section 1: Original Dataset</h2>
 <p>The main dataset for our project is the <a href="https://catalog.data.gov/dataset/highway-rail-grade-crossing-accident-data">Highway-Rail Grade Crossing accident data</a>. This data was published on Oct. 18, 2022, and was collected by Federal Railroad Administration by collecting the surveys of accidents of HIGHWAY-RAIL GRADE CROSSING ACCIDENT/INCIDENT REPORT. Furthermore, this dataset was collected for the latter researchers to finger out the reasons why some locations have a higher rate of accidents, whether it is because of the visibility or other reasons, such as temperature and the signaling systems, which is exactly what our team is interested in.
-Since this is an extremely big database (241519 rows and 159 columns), we only focus on the data for Massachusetts ranging from 1975 to 2022 for our project.</p>
-<p>The following are the relevant variables for the original datasets:</p>
+Since this is an extremely big database (241519 rows and 159 columns), we only focus on the data for Massachusetts ranging from 1975 to 2022 for our project.<br />
+ <br />
+The following are the relevant variables for the original datasets:</p>
 <ul>
 <li><code>Report Years</code>, <code>Date</code>, <code>Month</code>, <code>Day</code>, <code>Hour</code>, <code>Minute</code>, <code>AM/PM</code>, <code>Time</code>: accurate time elements of when the accidents happened</li>
 <li><code>County Name</code>: the county where the accidents took places</li>
@@ -25,24 +26,31 @@ Since this is an extremely big database (241519 rows and 159 columns), we only f
 <li><code>Visibility</code>: this visibility during the time at which the accidents took place. Possible values are <code>Day</code>, <code>Dark</code>, <code>Dawn</code>, <code>Dusk</code></li>
 <li><code>Weather Condition</code>: the weather condition at the places where the acccidents took place. Possible values are <code>Clear</code>, <code>Cloundy</code>, <code>Rain</code>, <code>Snow</code>, <code>Sleet</code></li>
 </ul>
+<div id="section-1.1-cleaning-and-loading-the-original-dataset" class="section level3">
+<h3>Section 1.1: Cleaning and Loading the Original Dataset</h3>
+<p>As mentioned, the original dataset has a lot of columns with unnecessary columns, which results in missing information that we wanted to omit. Also, as we were only considering one specific state to study its accident numbers and factors that influence the accident rate, we cleaned the data in our next step.<br />
+ <br />
+So, for our EDA, we began by filtering out the data from Massachusetts, and removed variables we viewed as irrelevant to the possible causes of an accident or the coded columns that are repeated, such as types of crossing warning, number of vehicle occupants, reporting parties, etc. Next, since we found a typo of mistakenly recording “WORCESTER” as “WORCHESTER” during our initial data exploration, we used <code>str_replace_all</code> function to solve this problem. Finally, we checked that there were no parsing issues in our original cleaned dataset MA_select, which can be found <a href="https://drive.google.com/file/d/1OdrOlaBwO8MlDSL78BxI74YHk4wpAQhN/view">here</a>.</p>
 </div>
-<div id="section-1.1-cleaning-and-loading-the-original-dataset" class="section level2">
-<h2>Section 1.1: Cleaning and Loading the Original Dataset</h2>
-<p>As mentioned, the original dataset has a lot of columns with unnecessary columns, which results in missing information that we wanted to omit. Also, as we were only considering one specific state to study its accident numbers and factors that influence the accident rate, we cleaned the data in our next step.</p>
-<p>So, for our EDA, we began by filtering out the data from Massachusetts, and removed variables we viewed as irrelevant to the possible causes of an accident or the coded columns that are repeated, such as types of crossing warning, number of vehicle occupants, reporting parties, etc. Next, since we found a typo of mistakenly recording “WORCESTER” as “WORCHESTER” during our initial data exploration, we used <code>str_replace_all</code> function to solve this problem. Finally, we checked that there were no parsing issues in our original cleaned dataset MA_select, which can be found <a href="https://drive.google.com/file/d/1OdrOlaBwO8MlDSL78BxI74YHk4wpAQhN/view">here</a>.</p>
+<div id="section-1.2-potential-limitations-of-our-dataset" class="section level3">
+<h3>Section 1.2: Potential Limitations of our Dataset</h3>
+<p>One issue about our main dataset MA_select is that there are a lot of missing values or unknown for some variables. This happens even for those variables that we are interested in. Therefore, we will need to drop those values and this may affect the performance of our analysis. In addition, there are confounding variables that are not in the main dataset, which is the traffic volume variable. Luckily, we found another dataset that records the traffic volume of counties in Massachusetts.<br />
+ <br />
+However, even the traffic volume dataset has its own limitations. It does not have data regarding some counties, such as Suffolk, so for the traffic volume, we only focus on those counties that have data on traffic volume. However, when we only look at the years from 2017 to 2022, there are only around 60 pieces of data. As a result, on average, there is only 1 piece of data per month. Therefore, there may not be enough data in the main datasets for us to perform regression analysis. To still see the relationship between the traffic volume and the accidents count, we plan to draw series plots to see if there are similar trends between them.</p>
 </div>
-<div id="section-1.2-potential-limitations-of-our-dataset" class="section level2">
-<h2>Section 1.2: Potential Limitations of our Dataset</h2>
-<p>One issue about our main dataset MA_select is that there are a lot of missing values or unknown for some variables. This happens even for those variables that we are interested in. Therefore, we will need to drop those values and this may affect the performance of our analysis. In addition, there are confounding variables that are not in the main dataset, which is the traffic volume variable. Luckily, we found another dataset that records the traffic volume of counties in Massachusetts. However, even the traffic volume dataset has its own limitations. It does not have data regarding some counties, such as Suffolk, so for the traffic volume, we only focus on those counties that have data on traffic volume. However, when we only look at the years from 2017 to 2022, there are only around 60 pieces of data. As a result, on average, there is only 1 piece of data per month. Therefore, there may not be enough data in the main datasets for us to perform regression analysis. To still see the relationship between the traffic volume and the accidents count, we plan to draw series plots to see if there are similar trends between them.</p>
 </div>
 <div id="section-2-merging-datasets-and-cleaning-merged-datasets" class="section level2">
 <h2>Section 2: Merging Datasets and Cleaning Merged Datasets</h2>
-<p>In addition to exploratory data analysis of the original dataset, we wanted to see if traffic volume has any impact on the count of accidents in Massachusettes. In order to do so, we further combine the main dataset with another dataset, the <a href="https://mhd.public.ms2soft.com/tcds/tsearch.asp?loc=Mhd&amp;mod=">MA traffic volume</a> by county.</p>
-<p>This supplementary data was collected by the Highway Division of the Massachusetts Department of Transportation in order to analyze and predict the traffic flow, which provides instruction on things like extending some roads. And we manually picked the data from the website, calculated the average traffic volume by month, and summarized it in the MA traffic volume dataset. Since the earlier years do not have much meaning in representing the near future situation, we only use the traffic volume data ranging from 2017 to 2022. The TrafficVolume dataset can be found <a href="https://docs.google.com/spreadsheets/d/1mIT5NyYcTCREjJJ238Hj4ZIP0e5PvEb5-W9vbEptRgs/edit#gid=0">here</a></p>
-<p>The following are the variables in the MA traffic volume dataset:</p>
+<p>In addition to exploratory data analysis of the original dataset, we wanted to see if traffic volume has any impact on the count of accidents in Massachusettes. In order to do so, we further combine the main dataset with another dataset, the <a href="https://mhd.public.ms2soft.com/tcds/tsearch.asp?loc=Mhd&amp;mod=">MA traffic volume</a> by county.<br />
+ <br />
+This supplementary data was collected by the Highway Division of the Massachusetts Department of Transportation in order to analyze and predict the traffic flow, which provides instruction on things like extending some roads. And we manually picked the data from the website, calculated the average traffic volume by month, and summarized it in the MA traffic volume dataset. Since the earlier years do not have much meaning in representing the near future situation, we only use the traffic volume data ranging from 2017 to 2022. To offset the potential limitations brought by the limited data points in both our datasets, we combined the <code>Year</code> column and <code>Month</code> column to a new variable <code>MY</code> to represent the average traffic count of each month from 2017 to 2022. Then we join the two datasets as one, call it Accident_Traffic.
+The TrafficVolume dataset can be found <a href="https://docs.google.com/spreadsheets/d/1mIT5NyYcTCREjJJ238Hj4ZIP0e5PvEb5-W9vbEptRgs/edit#gid=0">here</a><br />
+ <br />
+The following are the variables in the MA traffic volume dataset:</p>
 <ul>
 <li><p><code>County</code>: counties from Massachusetts that correspond to MA_select to assure the same research subject</p></li>
 <li><p><code>Year</code>, <code>Month</code>: the specific year and month at the date when the traffic volume was collected</p></li>
+<li><p><code>MY</code>: the year and month when the accident happened and use it to correspond to the traffic volume from our external dataset.</p></li>
 <li><p><code>Count</code>: the average number of cars that count as the traffic volume during the month</p></li>
 </ul>
 </div>
